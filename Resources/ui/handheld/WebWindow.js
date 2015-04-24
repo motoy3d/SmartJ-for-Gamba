@@ -13,15 +13,25 @@ function WebWindow(webData) {
 	//TODO style.js
 	var self = Ti.UI.createWindow({
 		title: webData.title
-        ,navBarHidden: false
+        ,navBarHidden: webData.navBarHidden
         ,backgroundColor: 'black'
         ,barColor: style.common.barColor
         ,navTintColor: style.common.navTintColor
+        ,titleAttributes: {
+            color: style.common.navTintColor
+        }
+        ,top: 20
 	});
 	
     var webView = Ti.UI.createWebView();
     var flexSpace = Ti.UI.createButton({
         systemButton:Ti.UI.iPhone.SystemButton.FLEXIBLE_SPACE
+    });
+    var closeBtn = Ti.UI.createButton({
+        systemButton:Ti.UI.iPhone.SystemButton.STOP
+    });
+    closeBtn.addEventListener("click", function(e){
+        self.close();
     });
     var back;
     var forward;
@@ -36,6 +46,7 @@ function WebWindow(webData) {
     if(simpleDispModeProp == null || simpleDispModeProp == undefined) {
         simpleDispModeProp = false;
     }
+    
     //tweetから来た場合
     if(webData.html) {
         webView.html = webData.html;
@@ -114,28 +125,13 @@ function WebWindow(webData) {
                 facebook.setEnabled(true);
             }
         });
-        // 下スクロール時にツールバーを隠す。上スクロール時に表示する。
-/*        if(util.isiPhone()) {
-            webView.addEventListener("swipe", function(e){
-                Ti.API.info(e.direction + '. bubbles=' + e.bubbles);
-                if(e.direction == "up") {
-                    self.setToolbar(null);
-                } else if(e.direction == "down") {
-                    createToolbar();
-                }
-                e.cancelBubble = true;
-                e.bubbles = false;
-                if(e.bubbles) {
-                    webView.fireEvent("swipe", e);
-                }
-            });
-        }*/
 	}
 	
 	/**
 	 * ツールバーを生成する。
 	 */
 	function createToolbar() {
+	    Ti.API.info('🌟ツールバー作成');
     	//ツールバー
         back = Ti.UI.createButton({
             image: "/images/arrow_left.png"
@@ -174,7 +170,8 @@ function WebWindow(webData) {
         twitter.addEventListener("click", tweet);
         // facebookボタン
         facebook.addEventListener("click", facebookShareBySocialModule);
-        var barItems = [line, flexSpace, twitter, flexSpace, facebook, flexSpace, flexSpace, back, flexSpace, forward];
+        var barItems = [line, flexSpace, twitter, flexSpace, facebook, flexSpace/*, flexSpace*/
+            , back, flexSpace, forward, flexSpace, closeBtn];
         self.setToolbar(barItems, style.news.webWindowToolbar);
     }
     

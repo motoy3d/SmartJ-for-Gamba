@@ -32,28 +32,36 @@ exports.style = {
         },
         listViewTemplate : [
             {
-                type: 'Ti.UI.ImageView',
-                bindId: 'userProfileImage',    //プロフィール画像
-                properties: {
-                    top: 6
-                    ,left: 6
-                    ,width: 0
-                    ,height: 0
-                    ,borderRadius: 5
-//                    ,backgroundColor: '#000'
-                }
-            },
-            {
                 type: 'Ti.UI.View',
                 bindId: 'contentView',
                 properties: {
-                    top: 6
+                    top: 10
                     ,left: 6
                     ,right: 6
                     ,height: Ti.UI.SIZE
 //                    ,backgroundColor: '#000'
                 },
                 childTemplates: [
+                    {
+                        type: 'Ti.UI.ImageView',
+                        bindId: 'image',    //画像
+                        properties: {
+                            top: 3
+                            ,left: 3
+                            ,width: 140
+                            //,height: 100
+                            ,borderRadius: 1
+                        }
+/*
+                        ,events: {
+                            load: function(e){var util = require("/util/util").util; Ti.API.info('■■■image loaded. ' + util.toString(e.source));},
+                            error: function(e){
+                                var util = require("/common/util").util;
+                                Ti.API.error('■■■画像読み込みエラー　 ' + util.toString(e.source));
+                            }
+                        }
+*/
+                    },
                     {
                         // iOSではLabelにリンクがつけられない
                         type: 'Ti.UI.Label',
@@ -63,45 +71,25 @@ exports.style = {
 //                            ,backgroundColor: '#000'
                             ,font: {fontSize: 16}
                             ,top: 0
-                            ,left: 0
+                            ,left: 150
                             //,bottom: 260
-                            ,bottom: 30
-                            ,height: Ti.UI.SIZE
+                            ,bottom: 36
+                            //,height: Ti.UI.SIZE
                         }
                     },
-                    {
-                        type: 'Ti.UI.ImageView',
-                        bindId: 'postImage',    //投稿内画像
-                        properties: {
-                            top: 0,
-                            width: Ti.UI.SIZE
-                            ,left: 0
-                            ,bottom: 6
-                            //,height: 250
-                            ,height: 0
-//                            ,backgroundColor: '#000'
-                        },
-                        events: {
-                            load: function(e){var util = require("/util/util").util; Ti.API.info('■■■image loaded. ' + util.toString(e.source));},
-                            error: function(e){
-                                var util = require("/common/util").util;
-                                Ti.API.error('■■■画像読み込みエラー　 ' + util.toString(e.source));
-                            }
-                        }
-                    },
-                    {
-                        type: 'Ti.UI.Label',
-                        bindId: 'siteNameAndDatetime',    //サイト名＋日時ラベル
-                        properties: {
-                            color: '#A3A3A3'
-//                            ,backgroundColor: '#000'
-                            ,font: {fontSize: 14}
-                            ,bottom: 6
-                            ,right: 4
-                        }
-                    }
                 ],
             },
+            {
+                type: 'Ti.UI.Label',
+                bindId: 'siteNameAndDatetime',    //サイト名＋日時ラベル
+                properties: {
+                    color: '#A3A3A3'
+//                            ,backgroundColor: '#000'
+                    ,font: {fontSize: 14}
+                    ,bottom: 10
+                    ,right: 4
+                }
+            }
         ],
         /* Android用ツールバー */
         listViewRefreshTemplate : [
@@ -174,6 +162,9 @@ exports.style = {
             ,backgroundColor: "black"
             ,navTintColor: config.tintColor
             ,tintColor: config.tintColor
+            ,titleAttributes: {
+                color: config.tintColor
+            }
         },
         tableView : {
             backgroundColor: "black"
@@ -186,45 +177,52 @@ exports.style = {
             ,height: Ti.UI.SIZE
         },
         lineRow : {
-            title: "友達にLINEですすめる"
+            title: "友達にLINEですすめる💚"
             ,color: "white"
             ,width: Ti.UI.FILL
             ,hasChild: true
-            ,height: 50
+            ,height: 55
         },
         mailRow : {
-            title: "友達にメールですすめる"
+            title: "友達にメールですすめる📩"
             ,color: "white"
             ,width: Ti.UI.FILL
             ,hasChild: true
-            ,height: 50
+            ,height: 55
         },
         twitterRow : {
-            title: "twitterでつぶやく"
+            title: "twitterでつぶやく🔵"
             ,color: "white"
             ,width: Ti.UI.FILL
             ,hasChild: true
-            ,height: 50
+            ,height: 55
         },
         fbRow : {
-            title: "facebookでシェア"
+            title: "facebookでシェア💙"
             ,color: "white"
             ,width: Ti.UI.FILL
             ,hasChild: true
-            ,height: 50
+            ,height: 55
         },
         appReviewRow : {
-            title: "レビューを書く（プリーズ！）"
+            title: "レビューを書く（お願い🌟）"
             ,color: "white"
             ,width: Ti.UI.FILL
             ,hasChild: true
-            ,height: 50
+            ,height: 55
+        },
+        mailToDeveloperRow : {
+            title: "開発元にメールする📩"
+            ,color: "white"
+            ,width: Ti.UI.FILL
+            ,hasChild: true
+            ,height: 55
         }
     },
 	results : {
 	    table : {
 	        backgroundColor: 'black',
-	        separatorColor: 'gray'
+	        separatorColor: 'gray',
 	    },
 		tableViewRow : {
 			height : 'auto',
@@ -233,8 +231,13 @@ exports.style = {
 			className : 'resultsTableRow',
 			type: 'CONTENT'
 		},
+        buttonBar : {
+            backgroundColor: config.color
+            ,tintColor: config.color
+            ,width: 140
+        },
 		dateLabel : {
-			width : 135,
+			width : 150,
 			color : 'lightgray',
 			font : {fontSize : 13},
 			height : 24,
@@ -307,14 +310,29 @@ exports.style = {
 			top : 90,
 			bottom : 8,
 			right : 10			
+		},
+		otherTeamBtnAndroid : {
+		    title: "他チーム日程"
+            ,color: "white"
+            ,borderWidth: 1
+            ,backgroundColor: config.color
+            ,borderRadius: 8
+            ,height: 36
+            ,width: 150
+            ,top: 5		    
 		}
 	},
 	standings : {
 	    backgroundColor : "#0000ff",
-	    standingsView : {
+	    standingsViewiPhone : {
 	        top : 0
 	        ,backgroundColor: "black"
 	    },
+        standingsViewAndroid : {
+            top : 0
+            ,bottom: 46
+            ,backgroundColor: "black"
+        },
 	    table : {
             top: 37
             ,allowsSelection: false
@@ -348,7 +366,41 @@ exports.style = {
 	        backgroundColor: config.color
             ,tintColor: config.color
             ,width: 200
-	    }
+	    },
+        sortButtonAndroid : {
+            title: "ソート"
+            ,color: "white"
+            //,borderColor: "#902020"
+            ,borderWidth: 1
+//            ,backgroundImage: "/images/toolbarBackground.png"
+            ,backgroundColor: config.color
+            ,borderRadius: 8
+            ,height: 36
+            ,width: 70
+//            ,top: 5
+        },
+        jButtonAndroid : {
+            color: "lightgray"
+            ,borderWidth: 1
+            ,backgroundColor: config.color
+            ,borderRadius: 8
+            ,height: 36
+            ,width: 70
+            ,top: 5
+        },
+        aclNabiscoButtonAndroid : {
+            color: "white"
+            ,opacity: 1.0
+            //,borderColor: "#902020"
+            ,borderWidth: 1
+//            ,backgroundImage: "/images/toolbarBackground.png"
+            ,backgroundColor: config.color
+            ,borderRadius: 8
+            ,enabled: true
+            ,height: 36
+            ,width: 70
+            ,top: 5
+        }
 	},
 	twitter : {
         webWindow : {

@@ -5,8 +5,9 @@ function ApplicationTabGroup() {
 	var TwitterWindow = require('ui/handheld/TwitterWindow');
     var style = require("util/style").style;
     var util = require("util/util").util;
-	//create module instance
-	var self = Ti.UI.createTabGroup();
+	var self = Ti.UI.createTabGroup({
+	    navTintColor: style.common.navTintColor
+	});
 	if(util.isAndroid()) {
 	    self.applyProperties(style.tabsAndroid);
 	}

@@ -2,8 +2,10 @@
 /**
  * Youtube動画一覧を表示するウィンドウ
  * @param {Object} searchCond
+ * @param teamName
+ * @param teamNameFull
  */
-function YoutubeWindow(searchCond) {
+function YoutubeWindow(searchCond, teamName, teamNameFull) {
     var config = require("/config").config;
     var util = require("/util/util").util;
     var style = require("/util/style").style;
@@ -13,6 +15,9 @@ function YoutubeWindow(searchCond) {
         ,barColor: style.common.barColor
         ,navTintColor: style.common.navTintColor
 //        navBarHidden: true
+        ,titleAttributes: {
+            color: style.common.navTintColor
+        }
     });
     var guidList = [];
     // function
@@ -27,10 +32,13 @@ function YoutubeWindow(searchCond) {
     });
 
     var tableView = Ti.UI.createTableView({
-        data : data,
-        backgroundColor : "#000000",    //TODO style
-        separatorColor : "#000000"
+        data : data
+        ,backgroundColor : "#000000"    //TODO style
+        ,separatorColor : "#000000"
     });
+    if (util.isiPhone()) {
+        tableView.scrollIndicatorStyle = Ti.UI.iPhone.ScrollIndicatorStyle.WHITE;        
+    }
 
     self.add(tableView);
     tableView.addEventListener('click', function(e) {
@@ -108,12 +116,7 @@ function YoutubeWindow(searchCond) {
                     if(e.data == null) {
                         //indicator.hide();
                         ind.hide();
-                        var row = Ti.UI.createTableViewRow({
-                            height : 80,
-                            backgroundSelectedColor : "#f33"
-                        });
-                        row.text = style.common.noDataMsg;
-                        tableView.appendRow(row);
+                        alert(style.common.noMovieMsg);
                         return;
                     }
     //                for(var i=0; i<e.data.item.length; i++) {
@@ -126,10 +129,11 @@ function YoutubeWindow(searchCond) {
                     } else {
                         rowsData = new Array(createYoutubeRow(e.data.item));
                     }
-                    for(row in rowsData) {
-                        
+                    if (rowsData) {
+                        tableView.setData(rowsData);
+                    } else {
+                        alert(style.common.noMovieMsg);
                     }
-                    tableView.setData(rowsData);
                     startIndex += maxResults;
                     ind.hide();
                 } catch(e1) {
@@ -154,15 +158,29 @@ function YoutubeWindow(searchCond) {
      */
     function createYoutubeRow(item/*, index, array*/) {
         // try {
-            //Ti.API.info('###### createYoutubeRow() title=' + item.title);
+            Ti.API.info('###### createYoutubeRow() title=' + item.title);
             var title = item.title;
-            if(title.indexOf(config.teamName) == -1 && title.indexOf(vsTeam) == -1
-                && title.indexOf(util.getSimpleTeamName(vsTeam)) == -1
+            if(title.indexOf(teamName) == -1 && 
+                title.indexOf(teamNameFull) == -1 && 
+                title.indexOf(vsTeam) == -1 &&
+                title.indexOf(util.getSimpleTeamName(vsTeam)) == -1
                /*&& title.indexOf(searchCond.date) == -1*/) { 
                 //タイトルに自チーム名、対戦相手チーム名がないのは削除
-                Ti.API.info('タイトルに「' + config.teamName + '」、対戦相手チーム名(' + vsTeam + ')がないのは削除 [' + title + ']');
+                Ti.API.info('タイトルにチーム名(' + teamName + ' or ' + teamNameFull 
+                    + ')、対戦相手チーム名(' + vsTeam + " or " + util.getSimpleTeamName(vsTeam) + ')がないのは削除 [' + title + ']');
                 return null;
             }
+            Ti.API.info("◎ " + item.title);
+            //スカパーハイライトの場合、タイトルに自チーム名、対戦相手チーム名が両方ないのは削除
+            if(title.indexOf("【ハイライト】") != -1 && 
+                (title.indexOf(teamNameFull) == -1 || 
+                title.indexOf(vsTeam) == -1)
+               ) { 
+                Ti.API.info('スカパーハイライトの場合、タイトルにチーム名(' + teamNameFull 
+                    + ')、対戦相手チーム名(' + vsTeam + ')の両方がないのは削除 [' + title + ']');
+                return null;
+            }
+            
             var summary = "";
             if(item.pubDate) {
                 var pubDate = new Date(item.pubDate);
@@ -188,10 +206,10 @@ function YoutubeWindow(searchCond) {
             guidList.push(guid);
             guid = guid.substring(0, guid.indexOf("&"));
         
-            var thumbnail = "http://i.ytimg.com/vi/" + guid + "/2.jpg";
+            var thumbnail = "http://i.ytimg.com/vi/" + guid + "/0.jpg";
         
             var row = Ti.UI.createTableViewRow({
-                height : 90,
+                height : Ti.UI.SIZE,
         //      backgroundSelectedColor : "#f33",
                 type : "CONTENT"
             });
@@ -202,38 +220,43 @@ function YoutubeWindow(searchCond) {
             row.backgroundColor = "#000000";
             row.color = "#ffffff";
            //TODO
+            var img = Ti.UI.createImageView({
+                image : thumbnail
+                ,top: 0
+                ,left : 0
+                ,height : 240
+                ,width : 320
+                ,backgroundColor: "#ccc"
+            });
+            row.add(img);
+           
             var labelTitle = Ti.UI.createLabel({
-                text : title,
-                left : 130,
-                right : 10,
-                top : 5,
-                height : 50,
-                font : {
+                text : title
+                ,left : 10
+                ,right : 10
+                ,top : 230
+                ,bottom : 23
+                ,width: Ti.UI.FILL
+                ,height : Ti.UI.SIZE
+                ,font : {
                     fontSize : 14
-                },
-                color : "#ffffff"
+                }
+                ,wordWrap: true
+                ,color : "#ffffff"
             });
             row.add(labelTitle);
         
             var labelSummary = Ti.UI.createLabel({
-                text : summary,
-                left : 130,
-                right : 10,
-                bottom : 9,
-                font : {
+                text : summary
+                ,right : 10
+                ,bottom : 0
+                ,font : {
                     fontSize : 13
-                },
-                color : "#ffffff"
+                }
+                ,color : "#A3A3A3"
             });
             row.add(labelSummary);
         
-            var img = Ti.UI.createImageView({
-                image : thumbnail,
-                left : 0,
-                height : 90,
-                width : 120
-            });
-            row.add(img);
             return row;
         // } catch(ex) {
             // Ti.API.info('Youtube読み込み時エラー : ' + ex);
@@ -255,8 +278,12 @@ function YoutubeWindow(searchCond) {
                 url : movieUrl
             });
             var videoWin = Ti.UI.createWindow({
-                barColor: style.common.barColor
+                title: "動画"
+                ,barColor: style.common.barColor
                 ,navTintColor: style.common.navTintColor
+                ,titleAttributes: {
+                    color: style.common.navTintColor
+                }
             });
             videoWin.add(videoView);
             Ti.App.tabGroup.activeTab.open(videoWin, {

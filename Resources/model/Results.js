@@ -1,7 +1,10 @@
 /**
- * 試合日程・結果データ取得サービス 
+ * 試合日程・結果データ取得サービス
+ * @param resulstsWindow
+ * @param otherTeamId 他チーム日程表示時に使用 
+ * @param otherTeamName 他チーム日程表示時に使用 
  */
-function Results(resultsWindow) {
+function Results(resultsWindow, otherTeamId, otherTeamName) {
     var config = require("/config").config;
 	var util = require("util/util").util;
 	var style = require("util/style").style;
@@ -10,7 +13,8 @@ function Results(resultsWindow) {
 	self.load = load;
 //	self.createRow = createRow;
 	
-    var teamNameEncoded = encodeURIComponent(config.teamName);
+    var teamNameEncoded = encodeURIComponent(
+        otherTeamId != null && otherTeamId != ""? otherTeamName : config.teamName);
     var highlightEncoded = encodeURIComponent('ハイライト');
 
 	/**
@@ -31,6 +35,9 @@ function Results(resultsWindow) {
 		Ti.API.debug("シーズン＝" + currentSeason);
 		
         var resultsUrl = config.resultsUrl + util.getCurrentSeason();
+        if (otherTeamId && otherTeamId != null && otherTeamId != "") {
+            resultsUrl += "&otherTeamId=" + otherTeamId;
+        }
 		Ti.API.info("★★★日程読み込み " + resultsUrl);
 		//Ti.Yahoo.yql(config.resultsQuery, function(e) {
         var xhr = new XHR();
@@ -183,6 +190,14 @@ function Results(resultsWindow) {
 //            var dateYYYYMMDD = encodeURIComponent(currentSeason + "年" + month + "月" + day + "日");
             var teamEncoded = encodeURIComponent(team);
             var keyword1 = dateYYMMDD + '+' + teamEncoded + "+" + highlightEncoded;
+            Ti.API.info('compe=' + compe + ", item.compe=" + item.compe);
+            if (compe.indexOf("J1") == 0) {
+                var teamName = config.teamNameFull;
+                if (otherTeamId && otherTeamId != null && otherTeamId != "") {
+                    teamName = otherTeamName;
+                }
+                keyword1 = encodeURIComponent("【ハイライト】" + teamName + "「明治安田生命J1リーグ " + compe + "」");
+            }
             var keyword2 = dateYYYYMMDD1 + '+' + teamNameEncoded + '+' + teamEncoded /*+ encodeURIComponent("戦")*/;
             var keyword3 = dateYYYYMMDD2 + '+' + teamNameEncoded + '+' + teamEncoded;
             var keyword4 = dateYYYYMMDD3 + '+' + teamNameEncoded + '+' + teamEncoded;

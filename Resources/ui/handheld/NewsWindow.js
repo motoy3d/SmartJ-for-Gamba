@@ -41,6 +41,9 @@ function NewsWindow(tabGroup) {
         ,barColor: style.common.barColor
         ,navTintColor: style.common.navTintColor
         ,rightNavButton: configButton
+        ,titleAttributes: {
+            color: style.common.navTintColor
+        }
     });
 
     // 広告
@@ -57,7 +60,8 @@ function NewsWindow(tabGroup) {
             orientation:'horizontal',
             width: '320dp',
             height: '75dp',
-            top: '5dp'
+            top: '5dp',
+            iconCount: 4
         });
     } else {
         // for iPhone
@@ -191,11 +195,12 @@ function NewsWindow(tabGroup) {
                 ,content : item.content
                 ,image : item.image
                 ,pubDate : item.pubDate
+                ,navBarHidden : true
                 ,toolbarVisible : true
             };
             var webWindow = new WebWindow(webData);
             //TODO 黒いスペースができてしまうTiのバグ
-//            webWindow.tabBarHidden = true;
+            //webWindow.tabBarHidden = true;
             tabGroup.activeTab.open(webWindow, {animated: true});
             Ti.App.Analytics.trackPageview('/newsDetail');
         } finally {
@@ -325,9 +330,17 @@ function NewsWindow(tabGroup) {
                                         }  
                                      );
                                 }
+                                Ti.API.info('★rowsData = ' + rowsData);
+                                Ti.API.info('★dataSection = ' + dataSection);
+                                Ti.API.info('★listView = ' + listView);
+                                Ti.API.info('★sections = ' + sections + " (" + sections.length + ")");
+                                Ti.API.info('★sections[0] = ' + sections[0]);
                                 dataSection.setItems(rowsData);
+                                Ti.API.info('★★');
                                 listView.sections = sections;
+                                Ti.API.info('★★★');
                                 listView.setMarker({sectionIndex: 0, itemIndex: (rowsData.length - 1) });
+                                Ti.API.info('★★★★');
                                 self.add(listView);
                                 news.newest_item_timestamp = newest_item_timestamp;
                                 news.oldest_item_timestamp = oldest_item_timestamp;

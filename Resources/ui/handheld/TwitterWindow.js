@@ -19,6 +19,9 @@ function TwitterWindow(tabGroup, target) {
         ,barColor: style.common.barColor
         ,navTintColor: style.common.navTintColor
 //        ,rightNavButton: refreshButton
+        ,titleAttributes: {
+            color: style.common.navTintColor
+        }
     });
     if (util.isAndroid()) {
         self.navBarHidden = true;
@@ -237,7 +240,7 @@ function TwitterWindow(tabGroup, target) {
                         if("firstTime" == kind) {
                             if(rowsData) {
                                 Ti.API.info("rowsData = " + util.toString(rowsData[0]));
-                                Ti.API.info("content = " + rowsData[0].postImage);
+                                Ti.API.info("postImage = " + rowsData[0].postImage);
                                 if(util.isAndroid()) {   // リロードボタンの行を１番目に挿入
                                      rowsData.unshift(
                                         {

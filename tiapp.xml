@@ -2,11 +2,11 @@
 <ti:app xmlns:ti="http://ti.appcelerator.org">
     <id>smartj.gamba</id>
     <name>SmartJ for Gamba</name>
-    <version>1.0.1</version>
+    <version>1.0.4</version>
     <publisher>Motoi Kataoka</publisher>
     <url>http://motoy3d.blogspot.com</url>
     <description>ガンバ大阪アプリ！</description>
-    <copyright>2014 by Motoi Kataoka</copyright>
+    <copyright>2015 by Motoi Kataoka</copyright>
     <icon>appicon.png</icon>
     <navbar-hidden>true</navbar-hidden>
     <analytics>false</analytics>
@@ -45,8 +45,10 @@
         </orientations>
     </iphone>
     <android xmlns:android="http://schemas.android.com/apk/res/android">
-        <manifest android:installLocation="auto" android:versionCode="1" android:versionName="1.0.0">
-            <application android:hardwareAccelerated="false" android:theme="@style/Theme.Titanium"/>
+        <manifest android:installLocation="auto" android:versionCode="3" android:versionName="1.0.2">
+            <application android:hardwareAccelerated="false" android:theme="@style/Theme.Titanium">
+                <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version"/>
+            </application>
             <uses-sdk android:minSdkVersion="14"/>
             <supports-screens android:anyDensity="false"/>
         </manifest>
@@ -74,5 +76,5 @@
         <target device="mobileweb">false</target>
         <target device="tizen">false</target>
     </deployment-targets>
-    <sdk-version>3.2.3.GA</sdk-version>
+    <sdk-version>3.5.1.GA</sdk-version>
 </ti:app>

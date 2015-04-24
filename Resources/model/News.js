@@ -26,6 +26,10 @@ function News() {
 //  Ti.API.info('visitedUrlList読み込み：' + visitedUrlList);
 //    Ti.API.info('visitedUrlList数：' + visitedUrlList.length);
     self.visitedUrlList = visitedUrlList;
+
+//    Ti.API.info('styleから画像width取得=' + style.news.listViewTemplate[0].childTemplates[0].properties.width);
+    //画像のwidth既定値
+    var dispImgWidth = style.news.listViewTemplate[0].childTemplates[0].properties.width;
     
     /**
      * フィードを読み込んで表示する
@@ -108,7 +112,6 @@ function News() {
         function onErrorCallback(e) {
             Ti.API.error(e);
         }
-    
     }
     
     /**
@@ -131,29 +134,12 @@ function News() {
         }
         // 画像
         var hasImage = false;
-        var imgTagIdx = content.indexOf("<img");
         var imgUrl = "";
+        var imgWidth = "";
+        var imgHeight = "";
         //Androidはレイアウトが崩れるため一旦除外
-        if(util.isiPhone() && imgTagIdx != -1) {
-            var srcIdx = content.indexOf("src=", imgTagIdx);
-            if(srcIdx != -1) {
-                var urlStartIdx = srcIdx + 5;
-                var urlEndIdx = content.indexOf('"', urlStartIdx);
-                imgUrl = content.substring(urlStartIdx, urlEndIdx);
-                imgUrl = util.replaceAll(imgUrl, "&amp;", "&");
-    //            Ti.API.debug('画像＝＝＝＝＝' + imgUrl + "  >  " + item.entry_title);
-                // アイコン等はgifが多いのでスキップ
-                if(!util.isUnnecessaryImage(imgUrl)) {
-                    var imgLabel = Ti.UI.createImageView(style.news.imgView);               
-                    var imgContainer = Ti.UI.createView(style.news.imgViewContainer);
-                    imgLabel.image = imgUrl;
-                    imgContainer.add(imgLabel);
-    //                rowView.add(imgContainer);
-                    hasImage = true;
-                } else {
-                    imgUrl = "";
-                }
-            }
+        if(util.isiPhone()) {
+            var imgUrl = item.image_url;
         }
         // タイトルラベル
         var titleLabel = Ti.UI.createLabel(style.news.titleLabel);
@@ -198,26 +184,38 @@ function News() {
         var siteNameLabel = Ti.UI.createLabel(style.news.siteNameLabel);
         siteNameLabel.text = siteName + "   " + pubDateText;
         //Ti.API.info('★siteNameLabel.text==' + siteNameLabel.text);
-    imgUrl = "";    //TODO test
-    //    Ti.API.info('画像：' + imgUrl);
+        if (imgUrl) {
+            var orgImgWidth = item.image_width;
+            var orgImgHeight = item.image_height;
+            var magnification =  dispImgWidth / orgImgWidth; //幅の倍率
+            var dispImgHeight = Math.round(orgImgHeight * magnification);
+            Ti.API.info('画像：' + imgUrl + " (org_w=" + orgImgWidth + ", org_h=" + orgImgHeight + ") "
+                + " (w=" + dispImgWidth + ", h=" + dispImgHeight + ") / " + siteName);
+        }
         var data = {
             url: link
             ,contentView: {
                 backgroundColor: isVisited? style.news.visitedBgColor : 'black'
             }
-            //,postImage: {image: imgUrl, height: imgUrl? 240 : 0}
-            ,title: {text: itemTitle}
+            ,image: {
+                image: imgUrl
+                ,width: imgUrl? dispImgWidth : 0
+                ,height: imgUrl? dispImgHeight : 0
+            }
+            ,title: {
+                text: itemTitle
+                , left: imgUrl? dispImgWidth + 10 : 6
+                , height: imgUrl? dispImgHeight : Ti.UI.SIZE
+            }
             ,siteNameAndDatetime: {text: siteName + "   " + pubDateText}
             ,properties: {backgroundColor: isVisited? style.news.visitedBgColor : 'black'}
             
-            ,fullSiteName: fullSiteName
             ,fullSiteName: fullSiteName
             ,siteName: siteName
             ,pageTitle: itemTitle
             ,pageTitleFull: itemTitleFull
             ,link: link
             ,content: content
-            ,image: imgUrl
             ,pubDate: pubDateText
     
     // 選択時背景色がAndroidで効かない

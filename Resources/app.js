@@ -1,28 +1,24 @@
-/*
- * A tabbed application, consisting of multiple stacks of windows associated with tabs in a tab group.  
- * A starting point for tab-based application with multiple top-level windows. 
- * Requires Titanium Mobile SDK 1.8.0+.
- * 
- * In app.js, we generally take care of a few things:
- * - Bootstrap the application with any data we need
- * - Check for dependencies like device type, platform version or network connection
- * - Require and open our top-level UI component
- *  
- */
-
-// This is a single context application with mutliple windows in a stack
 (function() {
     var config = require("/config").config;
-    var util = require("util/util").util;
-    var style = require("util/style").style;
-    var XHR = require("util/xhr");
+    var util = require("/util/util").util;
+    var style = require("/util/style").style;
+    var XHR = require("/util/xhr");
 
 	startAnalytics();
 	initDB();
+	//起動回数保存
+	var launchAppCount = Ti.App.Properties.getInt("LaunchAppCount");
+	if (!launchAppCount) {
+	    launchAppCount = 0;
+	    Ti.App.Properties.setBool("shareAndReviewDoneFlg", false);
+	}
+	Ti.App.Properties.setInt("LaunchAppCount", ++launchAppCount);
+	Ti.API.info('アプリ起動 : ' + launchAppCount);
 	
 	//determine platform and form factor and render approproate components
 	var osname = Ti.Platform.osname,
-		version = Ti.Platform.version,
+		osversion = Ti.Platform.version,
+        appversion = Ti.App.version,
 		model = Ti.Platform.model,
 		name = Ti.Platform.name,
 		height = Ti.Platform.displayCaps.platformHeight,
@@ -33,7 +29,8 @@
 		xdpi = Ti.Platform.displayCaps.xdpi,
 		ydpi = Ti.Platform.displayCaps.ydpi;
 	Ti.API.info('★★osname=' + osname);
-	Ti.API.info('★★version=' + version);
+	Ti.API.info('★★osversion=' + osversion);
+    Ti.API.info('★★appversion=' + appversion);
     Ti.API.info('★★name=' + name);
     Ti.API.info('★★model=' + model);
 	Ti.API.info('★★width/height=' + width + "/" + height);
@@ -43,11 +40,11 @@
     Ti.API.info('★★xdpi=' + xdpi);
     Ti.API.info('★★ydpi=' + ydpi);
     Ti.API.info('☆☆dpi from module=' + util.getDpi());
-    Ti.App.Analytics.trackPageview("/startApp?m=" + model + "&v=" + version/* + "&wh=" + width + "x" + height*/);	
+    Ti.App.Analytics.trackPageview("/startApp?m=" + model + "&v=" + osversion/* + "&wh=" + width + "x" + height*/);	
 
 	var isTablet = osname === 'ipad' || (osname === 'android' && (width > 899 || height > 899));
 	if(osname == "iphone") {
-        Ti.UI.iPhone.statusBarStyle = Ti.UI.iPhone.StatusBar.OPAQUE_BLACK;
+        Ti.UI.iPhone.statusBarStyle = Ti.UI.iPhone.StatusBar.LIGHT_CONTENT;
 	}
 	
 	// 全置換：全ての文字列 org を dest に置き換える  
@@ -68,18 +65,21 @@
     //メッセージ
     var message = null;
     var xhr = new XHR();
-    var confUrl = config.messageUrl + "&os=" + osname + "&version=" + version;
+    var confUrl = config.messageUrl + "&os=" + osname + "&osversion=" + osversion + "&appversion=" + appversion;
     Ti.API.info(new Date() + ' メッセージURL：' + confUrl);
     xhr.get(confUrl, onSuccessCallback, onErrorCallback);
     function onSuccessCallback(e) {
         Ti.API.info('メッセージデータ:' + e.data);
         if(e.data) {
             var json = JSON.parse(e.data);
-            if(json && json[0] && json[0].adType){
+            if(json && json[0]) {
+                Ti.App.jcategory = json[0].jcategory;    //Jリーグカテゴリ
+                Ti.App.currentStage = json[0].currentStage;    //J1現在ステージ
+                Ti.App.aclFlg = json[0].aclFlg;    //ALC出場フラグ(true/false)
                 Ti.App.adType = json[0].adType;    //広告タイプ(1:アイコン、2:バナー)
-            }
-            if(json && json[0] && json[0].message){
-                message = json[0].message;
+                if(json[0].message){
+                    message = json[0].message;
+                }
             }
         }
         var ApplicationTabGroup = require('ui/common/ApplicationTabGroup');
@@ -103,10 +103,13 @@
             var dialog = Ti.UI.createAlertDialog({title: 'お知らせ', message: message});
             dialog.show();
         }
+        // シェア・レビュー依頼
+        if (launchAppCount == 5 || launchAppCount % 15 == 0) {
+            openShareAndReviewWindow();
+        }
     };
     function onErrorCallback(e) {
-    };
-	
+    };	
 })();
 
 /**
@@ -152,4 +155,36 @@ function startAnalytics() {
 	    }
 	};
 	analytics.start(7);	//7秒に1回データ送信
+}
+
+/**
+ * シェア・レビュー依頼を行う。
+ */
+function openShareAndReviewWindow() {
+    var shareAndReviewDoneFlg = Ti.App.Properties.getBool("shareAndReviewDoneFlg");
+    if (!shareAndReviewDoneFlg || shareAndReviewDoneFlg == false) {
+        var dialog = Ti.UI.createAlertDialog({
+            message: "アプリをお楽しみでしょうか？"
+            ,buttonNames: ["いいえ", "はい"]
+        });
+        dialog.addEventListener('click', function(e) {
+            if (e.index === 0) {
+                //いいえの場合
+            } else if (e.index == 1) {
+                var ConfigWindow = require("/ui/handheld/ConfigWindow");
+                var configWindow = new ConfigWindow();
+                configWindow.tabBarHidden = true;
+                Ti.App.tabGroup.activeTab.open(configWindow, {animated: true});
+                Ti.App.Properties.setBool("shareAndReviewDoneFlg", true);
+                //はいの場合
+                var dialog = Ti.UI.createAlertDialog({
+                    message: 'よろしければ、レビューまたはシェアをお願いします m(_ _)m',
+                    ok: 'OK',
+                    title: ''
+                });
+                dialog.show();                
+            }
+        });    
+        dialog.show();
+    }
 }

@@ -2,6 +2,7 @@ exports.config = {
     teamId: 'gamba'
     ,hashtag: 'gamba'
     ,teamName: 'G大阪'
+    ,teamNameFull: 'ガンバ大阪'
     ,appName: 'スマートJ for ガンバ大阪'
     ,iPhoneAppUrl: 'https://itunes.apple.com/jp/app/id921999025?l=ja&ls=1&mt=8'
     ,androidAppUrl: 'https://play.google.com/store/apps/details?id=smartj.gamba'
@@ -12,8 +13,12 @@ exports.config = {
     ,feedUrlBase: 'http://sub0000499082.hmk-temp.com/redsmylife/news.json'
     //日程・結果のソースURL
     ,resultsUrl: "http://sub0000499082.hmk-temp.com/redsmylife/results.json?teamId=gamba&season="
+    //順位表のソースURL
+    ,standingsUrl: 'http://sub0000499082.hmk-temp.com/redsmylife/standings.json'
     //設定、メッセージのソースURL
     ,messageUrl: "http://sub0000499082.hmk-temp.com/redsmylife/config.json?teamId=gamba"
+    //開発元メールアドレス
+    ,developerMail: "motoy3d+smartj@gmail.com"
     ,newsEntriesPerPage: 50
     ,googleAnalyticsTrackingId: 'UA-30928840-1'
     //nend(iPhone)
