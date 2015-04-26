@@ -77,25 +77,27 @@ function NewsWindow(tabGroup) {
             adView.apiKey = config.nendApiKeyIPhoneBanner;
         }
     }
-    // 2. Add Event Listener.
-    // 受信成功通知
-    adView.addEventListener('receive',function(e){
-        //Ti.API.info('icon receive');
-    });
-    // 受信エラー通知
-    adView.addEventListener('error',function(e){
-        Ti.API.info('広告受信エラー');
-        adViewContainer.setHeight(0);
-        listView.setTop(0);
-    });
-    // クリック通知
-    adView.addEventListener('click',function(e){
-        Ti.API.info('広告クリック');
-    }); 
-    
-    // 3. Add View
-    adViewContainer.add(adView);
-    self.add(adViewContainer);
+    if (adView) {
+        // 2. Add Event Listener.
+        // 受信成功通知
+        adView.addEventListener('receive',function(e){
+            //Ti.API.info('icon receive');
+        });
+        // 受信エラー通知
+        adView.addEventListener('error',function(e){
+            Ti.API.info('広告受信エラー');
+            adViewContainer.setHeight(0);
+            listView.setTop(0);
+        });
+        // クリック通知
+        adView.addEventListener('click',function(e){
+            Ti.API.info('広告クリック');
+        }); 
+        
+        // 3. Add View
+        adViewContainer.add(adView);
+        self.add(adViewContainer);
+    }
     // インジケータ
     var indicator = Ti.UI.createActivityIndicator();
     self.add(indicator);
