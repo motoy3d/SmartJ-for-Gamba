@@ -557,7 +557,7 @@ function StandingsWindow(tabGroup) {
         }
         //ACL / Nabisco
         var aclNabisco = Ti.UI.createButton(style.standings.aclNabiscoButtonAndroid);
-        aclNabisco.title = Ti.App.aclFlg ? "ACL" : "ナビスコ";
+        aclNabisco.title = Ti.App.aclFlg ? "ACL" : "ﾅﾋﾞｽｺ";
         aclNabisco.left = jBtnLeft + 210;
         
         jBtn1st.addEventListener("click", function(e){

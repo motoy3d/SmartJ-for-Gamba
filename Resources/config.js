@@ -8,6 +8,7 @@ exports.config = {
     ,androidAppUrl: 'https://play.google.com/store/apps/details?id=smartj.gamba'
     ,color: '#0000bf'
     ,tintColor: 'white'
+    ,standingsBgcolor: '#0000ff'
     ,dbName: 'smartj.gamba'
     //ニュースのソースURL
     ,feedUrlBase: 'http://sub0000499082.hmk-temp.com/redsmylife/news.json'
@@ -17,6 +18,8 @@ exports.config = {
     ,standingsUrl: 'http://sub0000499082.hmk-temp.com/redsmylife/standings.json'
     //設定、メッセージのソースURL
     ,messageUrl: "http://sub0000499082.hmk-temp.com/redsmylife/config.json?teamId=gamba"
+    //動画のソースURL
+    ,videoUrl: "http://sub0000499082.hmk-temp.com/redsmylife/video.json?teamId=gamba"
     //開発元メールアドレス
     ,developerMail: "motoy3d+smartj@gmail.com"
     ,newsEntriesPerPage: 50
@@ -29,4 +32,6 @@ exports.config = {
     //nend(Android)
     ,nendSpotIdAndroid: 238682
     ,nendApiKeyAndroid: 'cb7c7f1af7940fa9a23d80e1da13a2e73ea5de75'
+    ,nendSpotIdAndroidBanner: 386620
+    ,nendApiKeyAndroidBanner: 'db283df7d840ab5a92ad9d407255a3e003011504'
 };

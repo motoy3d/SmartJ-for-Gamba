@@ -106,7 +106,7 @@ function Results(resultsWindow, otherTeamId, otherTeamName) {
             score = item.score;
             detailUrl = item.detail_url;
 			Ti.API.info(team + ' スコア ' + score + "　" + result + ".");
-            if("○" == result) {
+            if("○" == result || "◯" == result) {
                 resultImage = "/images/win.png";
             } else if("△" == result) {
                 resultImage = "/images/draw.png";
@@ -172,49 +172,9 @@ function Results(resultsWindow, otherTeamId, otherTeamName) {
 		movieButton.addEventListener('click', function() {
 		    Ti.API.debug('>>>>>>>>>>> date=' + item.game_date1);
 		    var gameDate = new Date(item.game_date1);
-			var monthDate = new Array(gameDate.getMonth()+1, gameDate.getDate());
-			var month = monthDate[0];
-			if(month.length == 1) {
-				month = '0' + month;
-			}
-			var day = monthDate[1];
-			if(day.length == 1) {
-				day = '0' + day;
-			}
-			// 動画検索キーワード作成
-            var dateYYMMDD = String(currentSeason).substring(2) + month + day;
-            var dateYYYYMMDD1 = currentSeason + "." + month + "." + day;
-            var dateYYYYMMDD2 = currentSeason + "." + monthDate[0] + "." + day;
-            var dateYYYYMMDD3 = currentSeason + "/" + monthDate[0] + "/" + day;
-            var dateYYYYMMDD4 = currentSeason + "/" + month + "/" + day;
-//            var dateYYYYMMDD = encodeURIComponent(currentSeason + "年" + month + "月" + day + "日");
-            var teamEncoded = encodeURIComponent(team);
-            var keyword1 = dateYYMMDD + '+' + teamEncoded + "+" + highlightEncoded;
-            Ti.API.info('compe=' + compe + ", item.compe=" + item.compe);
-            if (compe.indexOf("J1") == 0) {
-                var teamName = config.teamNameFull;
-                if (otherTeamId && otherTeamId != null && otherTeamId != "") {
-                    teamName = otherTeamName;
-                }
-                keyword1 = encodeURIComponent("【ハイライト】" + teamName + "「明治安田生命J1リーグ " + compe + "」");
-            }
-            var keyword2 = dateYYYYMMDD1 + '+' + teamNameEncoded + '+' + teamEncoded /*+ encodeURIComponent("戦")*/;
-            var keyword3 = dateYYYYMMDD2 + '+' + teamNameEncoded + '+' + teamEncoded;
-            var keyword4 = dateYYYYMMDD3 + '+' + teamNameEncoded + '+' + teamEncoded;
-            var keyword5 = dateYYYYMMDD4 + '+' + teamNameEncoded + '+' + teamEncoded;
-            
-            Ti.API.info("キーワード：" + keyword1 + "  :  " + keyword2 + " : " + keyword3);
+            var title = compe + "(" + date + ") vs " + team;
             // ResultsWindow側の処理を呼び出す
-            resultsWindow.searchMovie({
-                title: compe + "(" + date + ") vs " + team
-                ,key1: keyword1
-                ,key2: keyword2
-                ,key3: keyword3
-                ,key4: keyword4
-                ,key5: keyword5
-                ,team: team
-                ,date: dateYYYYMMDD1
-            });
+            resultsWindow.searchMovie(title, util.replaceAll(util.formatDate(gameDate), "/", ""));
 		});
 		row.add(movieButton);
 		//Ti.API.debug('row====' + row);

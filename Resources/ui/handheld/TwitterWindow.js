@@ -5,7 +5,6 @@
  */
 function TwitterWindow(tabGroup, target) {
     var Twitter = require("/model/Twitter");
-    var WebWindow = require("/ui/handheld/WebWindow");    
     var util = require("/util/util").util;
     var style = require("/util/style").style;
     var twitter = new Twitter(target);
@@ -18,7 +17,7 @@ function TwitterWindow(tabGroup, target) {
         ,backgroundColor: 'black'
         ,barColor: style.common.barColor
         ,navTintColor: style.common.navTintColor
-//        ,rightNavButton: refreshButton
+//        ,rightNavButton: optionBtn
         ,titleAttributes: {
             color: style.common.navTintColor
         }
@@ -110,7 +109,12 @@ function TwitterWindow(tabGroup, target) {
             item.content.color = "#38e";
             listView.sections[0].updateItemAt(itemIndex, item);
         }
+        var optionBtn = Ti.UI.createButton({image: "/images/gear.png"});
+        optionBtn.addEventListener("click", function(){
+            alert("報告、ブロック");
+        });
         var win = Ti.UI.createWindow(style.twitter.webWindow);
+        win.rightNavButton = optionBtn;
         //win.orientationModes = [Ti.UI.PORTRAIT];
         if (util.isAndroid()) {
             win.tabBarHidden = true;

@@ -1,16 +1,14 @@
-
 /**
  * Youtube動画一覧を表示するウィンドウ
- * @param {Object} searchCond
- * @param teamName
- * @param teamNameFull
+ * @param gameDate
  */
-function YoutubeWindow(searchCond, teamName, teamNameFull) {
+function YoutubeWindow(title, gameDate, otherTeamId) {
     var config = require("/config").config;
     var util = require("/util/util").util;
     var style = require("/util/style").style;
+    var Video = require("/model/Video");
     var self = Ti.UI.createWindow({
-        title: searchCond.title
+        title: title
         ,backgroundColor: 'white'
         ,barColor: style.common.barColor
         ,navTintColor: style.common.navTintColor
@@ -19,14 +17,11 @@ function YoutubeWindow(searchCond, teamName, teamNameFull) {
             color: style.common.navTintColor
         }
     });
-    var guidList = [];
     // function
     self.searchYoutube = searchYoutube;
     var vsTeam;
     // create table view data object
     var data = [];
-    var maxResults = 40;
-    var startIndex = 1;
     self.addEventListener('open',function(e) {
         searchYoutube();
     });
@@ -43,7 +38,7 @@ function YoutubeWindow(searchCond, teamName, teamNameFull) {
     self.add(tableView);
     tableView.addEventListener('click', function(e) {
         Ti.API.info('>>>>>>>>>> click');
-        playYouTube(e.row.videotitle, e.row.guid);
+        playYouTube(e.row.videoTitle, e.row.videoUrl);
     });
     
     // インジケータ
@@ -57,96 +52,42 @@ function YoutubeWindow(searchCond, teamName, teamNameFull) {
      * Youtubeで検索し、一覧表示する。
      */
     function searchYoutube() {
-//alert("searchYoutube");
         // オンラインチェック
         if(!Ti.Network.online) {
             util.openOfflineMsgDialog();
             return;
         }
         try {
-            vsTeam = searchCond.team;
-            var searchTerm1 = searchCond.key1;
-            var searchTerm2 = searchCond.key2;
-            var searchTerm3 = searchCond.key3;
-            var searchTerm4 = searchCond.key4;
-            var searchTerm5 = searchCond.key5;
+            var video = new Video(gameDate, otherTeamId);
             Ti.App.Analytics.trackPageview('/movieList');
-            var replaceKey = '#キーワード#';
-            var searchUrlBase = 'http://gdata.youtube.com/feeds/api/videos?alt=rss&q='
-                + replaceKey
-                + '&max-results=' + maxResults + '&start-index=' + startIndex
-                + '&orderby=published'  //relevance（関連度が高い順）、published（公開日順）、viewCount（再生回数順）、rating（評価が高い順） 
-                + '&v=2';
-        
-            var searchUrl = searchUrlBase.replace(replaceKey, searchTerm1);
-            var searchUrl2 = null;
-            if(searchTerm2) {
-                searchUrl2 = searchUrlBase.replace(replaceKey, searchTerm2);
-            }
-            var searchUrl3 = null;
-            if(searchTerm3) {
-                searchUrl3 = searchUrlBase.replace(replaceKey, searchTerm3);
-            }
-            var searchUrl4 = null;
-            if(searchTerm4) {
-                searchUrl4 = searchUrlBase.replace(replaceKey, searchTerm4);
-            }
-            var searchUrl5 = null;
-            if(searchTerm5) {
-                searchUrl5 = searchUrlBase.replace(replaceKey, searchTerm5);
-            }
-    
-            var youtubeFeedQuery = "SELECT title,pubDate,link,statistics.viewCount FROM feed WHERE " 
-                + "url='" + searchUrl + "'";
-            if(searchUrl2) {
-                youtubeFeedQuery += " or " + "url='" + searchUrl2 + "'";
-            }
-            if(searchUrl3) {
-                youtubeFeedQuery += " or " + "url='" + searchUrl3 + "'";
-            }
-            if(searchUrl4) {
-                youtubeFeedQuery += " or " + "url='" + searchUrl4 + "'";
-            }
-            if(searchUrl5) {
-                youtubeFeedQuery += " or " + "url='" + searchUrl5 + "'";
-            }
-            Ti.API.info("■YQL Query........" + youtubeFeedQuery);
-            Ti.Yahoo.yql(youtubeFeedQuery, function(e) {
+            video.load({
+                success: function(videoDataList) {
                 try {
-                    if(e.data == null) {
+                    if(videoDataList == null) {
                         //indicator.hide();
                         ind.hide();
                         alert(style.common.noMovieMsg);
                         return;
                     }
-    //                for(var i=0; i<e.data.item.length; i++) {
-    //                  Ti.API.info('#### ' + i + '=' + util.toString(e.data.item[i]));
-    //                }
-                    var rowsData;
+                    var rowsData = new Array();
                     //TODO なぜか配列でないと判定されてしまうのでjoinメソッド有無で配列判定。
-                    if(e.data.item.join) {
-                        rowsData = e.data.item.map(createYoutubeRow);
-                    } else {
-                        rowsData = new Array(createYoutubeRow(e.data.item));
+                    for (var i=0; i<videoDataList.length; i++) {
+                        rowsData.push(createYoutubeRow(videoDataList[i]));
                     }
-                    if (rowsData) {
+                    if (0 < rowsData.length) {
                         tableView.setData(rowsData);
                     } else {
                         alert(style.common.noMovieMsg);
                     }
-                    startIndex += maxResults;
                     ind.hide();
                 } catch(e1) {
                     ind.hide();
                     Ti.API.error('youtube読み込みエラー1：' + e1);
-//alert("エラー１: " + e1);                 
                 } finally {
-//alert("finally");
-//finally内の処理が効かない？
                 }
                 Ti.API.info('ind.hide() last');
                 ind.hide();
-            });
+            }});
         } catch(e2) {
             Ti.API.error('youtube読み込みエラー2：' + e2);
             ind.hide();
@@ -156,57 +97,15 @@ function YoutubeWindow(searchCond, teamName, teamNameFull) {
     /**
      * TableViewRowを生成して返す
      */
-    function createYoutubeRow(item/*, index, array*/) {
+    function createYoutubeRow(item) {
         // try {
-            Ti.API.info('###### createYoutubeRow() title=' + item.title);
-            var title = item.title;
-            if(title.indexOf(teamName) == -1 && 
-                title.indexOf(teamNameFull) == -1 && 
-                title.indexOf(vsTeam) == -1 &&
-                title.indexOf(util.getSimpleTeamName(vsTeam)) == -1
-               /*&& title.indexOf(searchCond.date) == -1*/) { 
-                //タイトルに自チーム名、対戦相手チーム名がないのは削除
-                Ti.API.info('タイトルにチーム名(' + teamName + ' or ' + teamNameFull 
-                    + ')、対戦相手チーム名(' + vsTeam + " or " + util.getSimpleTeamName(vsTeam) + ')がないのは削除 [' + title + ']');
-                return null;
-            }
-            Ti.API.info("◎ " + item.title);
-            //スカパーハイライトの場合、タイトルに自チーム名、対戦相手チーム名が両方ないのは削除
-            if(title.indexOf("【ハイライト】") != -1 && 
-                (title.indexOf(teamNameFull) == -1 || 
-                title.indexOf(vsTeam) == -1)
-               ) { 
-                Ti.API.info('スカパーハイライトの場合、タイトルにチーム名(' + teamNameFull 
-                    + ')、対戦相手チーム名(' + vsTeam + ')の両方がないのは削除 [' + title + ']');
-                return null;
-            }
+            //Ti.API.info('###### createYoutubeRow() item =' + util.toString(item));
+            var title = item.videoTitle;
+            //Ti.API.info("◎ " + item.videoTitle + "  " + item.viewCount + "回再生");
             
-            var summary = "";
-            if(item.pubDate) {
-                var pubDate = new Date(item.pubDate);
-                var minutes = pubDate.getMinutes();
-                if(minutes < 10) {
-                    minutes = "0" + minutes;
-                }
-                var viewCount = "";
-                if(item.statistics) {
-                    viewCount = item.statistics.viewCount + "回再生    ";
-                }
-                summary = viewCount
-                    + (pubDate.getMonth() + 1) + "/" 
-                    + pubDate.getDate() + " " + pubDate.getHours() + ":" + minutes;
-            }
-            var link = item.link;
-        
-            var guid = link.substring(link.indexOf("?v=") + 3);
-            if(util.contains(guidList, guid)){
-                Ti.API.info('重複動画');
-                return null;
-            }            
-            guidList.push(guid);
-            guid = guid.substring(0, guid.indexOf("&"));
-        
-            var thumbnail = "http://i.ytimg.com/vi/" + guid + "/0.jpg";
+            var link = item.videoUrl;
+            
+            var thumbnail = item.thumbnailUrl;
         
             var row = Ti.UI.createTableViewRow({
                 height : Ti.UI.SIZE,
@@ -215,8 +114,8 @@ function YoutubeWindow(searchCond, teamName, teamNameFull) {
             });
         
             row.url = link;
-            row.guid = guid;
-            row.videotitle = title;
+            row.videoUrl = item.videoUrl;
+            row.videoTitle = title;
             row.backgroundColor = "#000000";
             row.color = "#ffffff";
            //TODO
@@ -246,8 +145,13 @@ function YoutubeWindow(searchCond, teamName, teamNameFull) {
             });
             row.add(labelTitle);
         
+            var viewCount = "";
+            if(item.viewCount) {
+                viewCount = item.viewCount + "回再生    ";
+            }
+
             var labelSummary = Ti.UI.createLabel({
-                text : summary
+                text : viewCount
                 ,right : 10
                 ,bottom : 0
                 ,font : {
@@ -266,16 +170,15 @@ function YoutubeWindow(searchCond, teamName, teamNameFull) {
     /**
      * 動画を再生する
      */
-    function playYouTube(vtitle, vguid) {
+    function playYouTube(vtitle, videoUrl) {
         Ti.App.Analytics.trackPageview('/playMovie');
         Ti.API.info('------- playYouTube.. ' + Ti.Platform.name);
-        var movieUrl = "http://www.youtube.com/embed/" + vguid + "?fs=1&autoplay=1";
         if(util.isAndroid()) {
             // Youtubeアプリに任せる
-            Ti.Platform.openURL('http://www.youtube.com/watch?v=' + vguid);
+            Ti.Platform.openURL(videoUrl);
         } else {
             var videoView = Ti.UI.createWebView({
-                url : movieUrl
+                url : videoUrl
             });
             var videoWin = Ti.UI.createWindow({
                 title: "動画"

@@ -134,13 +134,9 @@ function News() {
         }
         // 画像
         var hasImage = false;
-        var imgUrl = "";
+        var imgUrl = item.image_url;
         var imgWidth = "";
         var imgHeight = "";
-        //Androidはレイアウトが崩れるため一旦除外
-        if(util.isiPhone()) {
-            var imgUrl = item.image_url;
-        }
         // タイトルラベル
         var titleLabel = Ti.UI.createLabel(style.news.titleLabel);
         var itemTitleFull = util.deleteUnnecessaryText(item.entry_title);

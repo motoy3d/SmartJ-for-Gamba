@@ -323,7 +323,7 @@ exports.style = {
 		}
 	},
 	standings : {
-	    backgroundColor : "#0000ff",
+	    backgroundColor : config.standingsBgcolor,
 	    standingsViewiPhone : {
 	        top : 0
 	        ,backgroundColor: "black"

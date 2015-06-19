@@ -4,12 +4,12 @@
 function ResultsWindow(tabGroup, otherTeamId, otherTeamName) {
     Ti.API.info('ResultsWindow  otherTeamId=' + otherTeamId + ", otherTeamName=" + otherTeamName);
     var config = require("/config").config;
-    var util = require("util/util").util;
-	var Results = require("model/Results");
+    var util = require("/util/util").util;
+	var Results = require("/model/Results");
     var Standings = require("/model/Standings");
     var WebWindow = require(util.isiPhone()? "/ui/handheld/WebWindow" : "/ui/handheld/WebWindowAndroid");
-	var YoutubeWindow = require("ui/handheld/YoutubeWindow");
-	var style = require("util/style").style;
+	var YoutubeWindow = require("/ui/handheld/YoutubeWindow");
+	var style = require("/util/style").style;
 	var initLoaded = false;
 
     // 更新ボタン
@@ -148,11 +148,8 @@ function ResultsWindow(tabGroup, otherTeamId, otherTeamName) {
 	/**
 	 * 動画検索結果を表示する (Results.jsから呼ぶ)
 	 */
-	function searchMovie(searchCond) {
-        Ti.API.info("searchMovie----------k1 =  " + searchCond.key1 + "¥n k2 =  " + searchCond.key2);
-        var teamName = otherTeamName? util.getSimpleTeamName(otherTeamName) : config.teamName;
-        var teamNameFull = otherTeamName? otherTeamName : config.teamNameFull;
-        var youtubeWindow = new YoutubeWindow(searchCond, teamName, teamNameFull);
+	function searchMovie(title, gameDate) {
+        var youtubeWindow = new YoutubeWindow(title, gameDate, otherTeamId);
         tabGroup.activeTab.open(youtubeWindow, {animated: true});
 	}
 	

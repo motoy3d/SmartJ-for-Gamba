@@ -215,6 +215,12 @@ exports.util = {
         return date;
     },
     /**
+     * 文字列を置換する 
+     */
+    replaceAll : function(expression, org, dest) {
+        return expression.split(org).join(dest);
+    },
+    /**
      *不要な文字列（タグや制御文字）を削除して返す 
      */
     deleteUnnecessaryText : function(text) {

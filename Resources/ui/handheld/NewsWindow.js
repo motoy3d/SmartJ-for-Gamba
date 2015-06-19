@@ -53,16 +53,25 @@ function NewsWindow(tabGroup) {
     if(Ti.Platform.osname === 'android'){        
         // for Android
         // Icon Layout type. 
-        adView = ad.createView ({
-            spotId: config.nendSpotIdAndroid,
-            apiKey: config.nendApiKeyAndroid,
-            adType:'icon',
-            orientation:'horizontal',
-            width: '320dp',
-            height: '75dp',
-            top: '5dp',
-            iconCount: 4
-        });
+        if(Ti.App.adType == 1) {//アイコン
+            adView = ad.createView ({
+                spotId: config.nendSpotIdAndroid,
+                apiKey: config.nendApiKeyAndroid,
+                adType:'icon',
+                orientation:'horizontal',
+                width: 320,
+                height: 75,
+                top: 5,
+                iconCount: 4
+            });
+        } else if(Ti.App.adType == 2) {    //バナー
+            adView = ad.createView ({
+                spotId: config.nendSpotIdAndroidBanner,
+                apiKey: config.nendApiKeyAndroidBanner,
+                top: 0,
+                isAdjust: true
+            });
+        }
     } else {
         // for iPhone
         if(Ti.App.adType == 1) {//アイコン
@@ -87,6 +96,7 @@ function NewsWindow(tabGroup) {
         adView.addEventListener('error',function(e){
             Ti.API.info('広告受信エラー');
             adViewContainer.setHeight(0);
+            adView.setHeight(0);
             listView.setTop(0);
         });
         // クリック通知
@@ -95,8 +105,12 @@ function NewsWindow(tabGroup) {
         }); 
         
         // 3. Add View
-        adViewContainer.add(adView);
-        self.add(adViewContainer);
+        if (util.isAndroid()) {
+            self.add(adView);
+        } else {
+            adViewContainer.add(adView);
+            self.add(adViewContainer);
+        }
     }
     // インジケータ
     var indicator = Ti.UI.createActivityIndicator();
@@ -308,16 +322,20 @@ function NewsWindow(tabGroup) {
                         //Ti.API.info("rowsData■" + rowsData);
                         // 初回ロード時
                         if("firstTime" == kind) {
-                            if(Ti.App.adType == 1 || Ti.Platform.osname === 'android') {//アイコン
-                                Ti.API.info('★アイコン広告');
+                            if(Ti.App.adType == 1) {//アイコン
+                                //Ti.API.info('★アイコン広告');
                                 adViewContainer.height = 80;
                                 adView.height = 75;
                                 listView.top = 80;
                             } else if(Ti.App.adType == 2){//バナー
-                                Ti.API.info('★バナー広告');
-                                adViewContainer.height = 50;
-                                adView.height = 50;
-                                listView.top = 50;
+                                //Ti.API.info('★バナー広告');
+                                if (util.isAndroid()) {
+                                    listView.top = 70; // 元は50
+                                } else {
+                                    adView.height = 50;
+                                    adViewContainer.height = 50;
+                                    listView.top = 50;
+                                }
                             }
                             if(rowsData) {
                                 if(util.isAndroid()) {   // リロードボタンの行を１番目に挿入

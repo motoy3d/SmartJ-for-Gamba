@@ -3,6 +3,7 @@
  * @param {Object} webData
  */
 function WebWindow(webData) {
+    var config = require("/config").config;
 	var style = require("util/style").style;
     var util = require("util/util").util;
 	var newsSource = require("model/newsSource");
@@ -219,7 +220,7 @@ function WebWindow(webData) {
         }
         social.showSheet({
             service:  'twitter',
-            message:  title,
+            message:  title + "#" + config.hashtag,
             urls:       [link],
             success:  function(){
                 Ti.API.info('ツイート成功');
