@@ -48,19 +48,19 @@ exports.style = {
                         properties: {
                             top: 3
                             ,left: 3
-                            ,width: 140
+                            ,width: 200
                             //,height: 100
                             ,borderRadius: 1
+                            ,backgroundColor: "#202020"
+                            ,defaultImage: ""
                         }
-/*
                         ,events: {
-                            load: function(e){var util = require("/util/util").util; Ti.API.info('■■■image loaded. ' + util.toString(e.source));},
+                            //load: function(e){Ti.API.info('■■■image loaded. ');},	//何故かエラーになる
                             error: function(e){
                                 var util = require("/common/util").util;
                                 Ti.API.error('■■■画像読み込みエラー　 ' + util.toString(e.source));
                             }
                         }
-*/
                     },
                     {
                         // iOSではLabelにリンクがつけられない
@@ -381,6 +381,7 @@ exports.style = {
         },
         jButtonAndroid : {
             color: "lightgray"
+            ,font: {fontSize: 15, fontWeight: "bold"}
             ,borderWidth: 1
             ,backgroundColor: config.color
             ,borderRadius: 8

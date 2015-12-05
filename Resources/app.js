@@ -6,14 +6,19 @@
 
 	startAnalytics();
 	initDB();
-	//起動回数保存
+	// 起動回数保存
 	var launchAppCount = Ti.App.Properties.getInt("LaunchAppCount");
 	if (!launchAppCount) {
 	    launchAppCount = 0;
-	    Ti.App.Properties.setBool("shareAndReviewDoneFlg", false);
+	    Ti.App.Properties.setBool("shareAndReviewDoneFlg", false);		//起動回数
 	}
 	Ti.App.Properties.setInt("LaunchAppCount", ++launchAppCount);
 	Ti.API.info('アプリ起動 : ' + launchAppCount);
+	// ユーザーID保存
+	if (!Ti.App.Properties.getString("userId")) {
+		Ti.App.Properties.setString("userId", Ti.Platform.osname + new Date().getTime());	//ユーザーID（カレントのミリ秒）
+		Ti.API.info('ユーザーID保存: ' + Ti.App.Properties.getString("userId"));
+	}
 	
 	//determine platform and form factor and render approproate components
 	var osname = Ti.Platform.osname,
@@ -67,6 +72,9 @@
     var xhr = new XHR();
     var confUrl = config.messageUrl + "&os=" + osname + "&osversion=" + osversion + "&appversion=" + appversion;
     Ti.API.info(new Date() + ' メッセージURL：' + confUrl);
+    if (confUrl.indexOf("localhost") != -1|| confUrl.indexOf("192.168") != -1) {
+    	alert("localhost");
+    }
     xhr.get(confUrl, onSuccessCallback, onErrorCallback);
     function onSuccessCallback(e) {
         Ti.API.info('メッセージデータ:' + e.data);
@@ -80,6 +88,8 @@
                 if(json[0].message){
                     message = json[0].message;
                 }
+                Ti.App.ngSiteList = json[0].ngSiteList;
+                Ti.API.info('🌟NGサイトリスト=' + util.toString(Ti.App.ngSiteList));
             }
         }
         var ApplicationTabGroup = require('ui/common/ApplicationTabGroup');
@@ -105,7 +115,7 @@
         }
         // シェア・レビュー依頼
         if (launchAppCount == 5 || launchAppCount % 15 == 0) {
-            openShareAndReviewWindow();
+            // openShareAndReviewWindow();
         }
     };
     function onErrorCallback(e) {
@@ -128,7 +138,15 @@ function initDB() {
     var deleteSql = "DELETE FROM visitedUrl WHERE date < " + condDate;
     Ti.API.info('削除SQL:' + deleteSql);
     db.execute(deleteSql);
-    db.close();
+    // ユーザがブロックしたサイト
+    db.execute('CREATE TABLE IF NOT EXISTS blockSite (url TEXT, date TEXT)');
+    
+    //TODO テスト
+    db.execute("delete from blockSite");
+    
+    
+    
+	db.close();
 }
 
 /**

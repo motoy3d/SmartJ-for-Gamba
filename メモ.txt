@@ -3,4 +3,18 @@ style.js (barColor, backgroundColor, etc)
 config.js (teamId, teamName)
 
 
+---------------
+tiapp.xmlでiPadをチェック
+tiapp.xmlでUISupportedInterfaceOrientations~ipadをPortraitのみにする
+util.isiOS()の追加。isiPhoneを置換
+DefaultIcon.png(1024x1024)
+appiconを削除
+StandingsWindow.jsでフォントサイズと幅調整
+nend1.4.1
+@3x画像を作成
+スプラッシュ作成
+util.js上書き
+style.js ・・・backgroundColor : config.standingsBgcolor,
+config.js・・・tintColorの下に追加→    ,standingsBgcolor: '背景色'
+StandingsWindow.js・・・全部上書き
 

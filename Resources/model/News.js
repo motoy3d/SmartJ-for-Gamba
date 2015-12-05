@@ -23,9 +23,8 @@ function News() {
     self.saveVisitedUrl = saveVisitedUrl;  //function
     
     visitedUrlList = getVisitedUrlList();
-//  Ti.API.info('visitedUrlList読み込み：' + visitedUrlList);
-//    Ti.API.info('visitedUrlList数：' + visitedUrlList.length);
     self.visitedUrlList = visitedUrlList;
+    var blockSiteList = getBlockedUrlList();
 
 //    Ti.API.info('styleから画像width取得=' + style.news.listViewTemplate[0].childTemplates[0].properties.width);
     //画像のwidth既定値
@@ -165,6 +164,8 @@ function News() {
         
         // 既読確認
         var isVisited = util.contains(visitedUrlList, link);
+        // ブロック確認
+        var isBlocked = util.containsStartsWith(blockSiteList, link);
         // サイト名
         var fullSiteName = item.site_name;
         if(fullSiteName.toString().indexOf("Google") == 0) {
@@ -186,7 +187,7 @@ function News() {
             var magnification =  dispImgWidth / orgImgWidth; //幅の倍率
             var dispImgHeight = Math.round(orgImgHeight * magnification);
             Ti.API.info('画像：' + imgUrl + " (org_w=" + orgImgWidth + ", org_h=" + orgImgHeight + ") "
-                + " (w=" + dispImgWidth + ", h=" + dispImgHeight + ") / " + siteName);
+                + " (w=" + dispImgWidth + ", h=" + dispImgHeight + ") / " + itemTitle);
         }
         var data = {
             url: link
@@ -199,7 +200,12 @@ function News() {
                 ,height: imgUrl? dispImgHeight : 0
             }
             ,title: {
-                text: itemTitle
+            	
+            	//TODO ブロックテスト
+                text: isBlocked? "（ブロック）" + itemTitle : itemTitle
+                
+                
+                
                 , left: imgUrl? dispImgWidth + 10 : 6
                 , height: imgUrl? dispImgHeight : Ti.UI.SIZE
             }
@@ -265,6 +271,27 @@ function News() {
         }
         return urlList;
     }
+
+    /**
+     * DBからブロックURLリストを返す
+     */
+    function getBlockedUrlList() {
+        Ti.API.info('■getBlockedUrlList');
+        var db = Ti.Database.open(config.dbName);
+        var urlList = new Array();
+        try {
+            var rows = db.execute('SELECT url, date FROM blockSite');
+            while (rows.isValidRow()) {
+                urlList.push(rows.field(0));
+                Ti.API.info('ブロックサイト　######## ' + rows.field(0) + " : " + rows.field(1));
+                rows.next();
+            }
+        } finally{
+            db.close();
+        }
+        return urlList;
+    }
+
     return self;
 };
 

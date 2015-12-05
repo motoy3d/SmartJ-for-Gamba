@@ -7,14 +7,14 @@ function ResultsWindow(tabGroup, otherTeamId, otherTeamName) {
     var util = require("/util/util").util;
 	var Results = require("/model/Results");
     var Standings = require("/model/Standings");
-    var WebWindow = require(util.isiPhone()? "/ui/handheld/WebWindow" : "/ui/handheld/WebWindowAndroid");
+    var WebWindow = require(util.isiOS()? "/ui/handheld/WebWindow" : "/ui/handheld/WebWindowAndroid");
 	var YoutubeWindow = require("/ui/handheld/YoutubeWindow");
 	var style = require("/util/style").style;
 	var initLoaded = false;
 
     // 更新ボタン
     var refreshButton = Ti.UI.createButton();
-    if(util.isiPhone()) {
+    if(util.isiOS()) {
         refreshButton.systemButton = Ti.UI.iPhone.SystemButton.REFRESH;
     } else {
         refreshButton.title = "更新";
@@ -43,13 +43,13 @@ function ResultsWindow(tabGroup, otherTeamId, otherTeamName) {
     });
 	// インジケータ
     var indicator = Ti.UI.createActivityIndicator({
-        style: util.isiPhone()? Ti.UI.iPhone.ActivityIndicatorStyle.PLAIN : Ti.UI.ActivityIndicatorStyle.BIG
+        style: util.isiOS()? Ti.UI.iPhone.ActivityIndicatorStyle.PLAIN : Ti.UI.ActivityIndicatorStyle.BIG
     });
 	self.add(indicator);
 	
 	if (!otherTeamId) {
     	// 他チーム日程ツールバー
-        if (util.isiPhone()) {
+        if (util.isiOS()) {
             var flexSpace = Ti.UI.createButton({
                systemButton:Ti.UI.iPhone.SystemButton.FLEXIBLE_SPACE
             });
@@ -97,7 +97,7 @@ function ResultsWindow(tabGroup, otherTeamId, otherTeamName) {
 				        }
 				    }
 				    if (rowsData.length <= 1) {
-				        alert("日程が読み込めませんでした。\n準備ができるまでお待ちください");
+				        util.showMsg("日程が読み込めませんでした。\n準備ができるまでお待ちください");
 				    } else {
     					self.add(tableView);
     					tableView.setData(rowsData);                        if(3 < rowIdx) {

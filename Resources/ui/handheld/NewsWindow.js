@@ -6,7 +6,7 @@ function NewsWindow(tabGroup) {
     var News = require("/model/News");
     var util = require("/util/util").util;
     var WebWindow = null;
-    if(util.isiPhone()) {
+    if(util.isiOS()) {
         WebWindow = require("/ui/handheld/WebWindow");
     } else {
         WebWindow = require("/ui/handheld/WebWindowAndroid");
@@ -214,8 +214,28 @@ function NewsWindow(tabGroup) {
                 ,navBarHidden : true
                 ,toolbarVisible : true
             };
-            var webWindow = new WebWindow(webData);
-            //TODO 黒いスペースができてしまうTiのバグ
+
+            var webWindow = new WebWindow(webData,
+				{ //ブロックサイトをリストから削除するcallback
+	                removeBlockedSite: function(site) {
+	                	//alert("removeBlockedSite = " + site);
+	                	var items = listView.sections[0].items;
+	                	Ti.API.info('items.length 1 = ' + items.length);
+	                	for(var i=0; i<items.length; i++) {
+	                		Ti.API.info(i + ' 🌟リンク ' + items[i].link);
+	                		if (items[i].link.indexOf(site) == 0) {
+		                		Ti.API.info('削除 ' + i);
+	                			listView.sections[0].deleteItemsAt(i, 1);
+	                			Ti.API.info('deleteItemsAt done');
+	                			i--;
+	                			items = listView.sections[0].items;
+	                			Ti.API.info('items.length 2 = ' + items.length);
+	                		}
+	                	}
+	                }
+	            }            	
+        	);
+            //TODO 黒いスペースができてしまうTiのバグ https://jira.appcelerator.org/browse/TIMOB-16069
             //webWindow.tabBarHidden = true;
             tabGroup.activeTab.open(webWindow, {animated: true});
             Ti.App.Analytics.trackPageview('/newsDetail');
@@ -234,7 +254,7 @@ function NewsWindow(tabGroup) {
         imageArrow.transform=Ti.UI.create2DMatrix();
         imageArrow.show();
         //TODO Android
-        if (util.isiPhone()) {
+        if (util.isiOS()) {
             listView.setContentInsets({top:0}, {animated:true});
         }
     }
@@ -252,7 +272,7 @@ function NewsWindow(tabGroup) {
         imageArrow.hide();
         actInd.show();
         //TODO Android
-        if (util.isiPhone()) {
+        if (util.isiOS()) {
             listView.setContentInsets({top:80}, {animated:true});
         }
         setTimeout(function(){
@@ -383,7 +403,7 @@ function NewsWindow(tabGroup) {
                                     listView.sections = sections;
                                 }
                                 Ti.API.debug('最新データ読み込み  件数＝' + rowsData.length);
-                                var appendIdx = util.isiPhone()? 0 : 1;
+                                var appendIdx = util.isiOS()? 0 : 1;
                                 dataSection.insertItemsAt(appendIdx, rowsData);
                             }
                         }

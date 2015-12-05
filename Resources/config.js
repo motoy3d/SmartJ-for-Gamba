@@ -20,6 +20,8 @@ exports.config = {
     ,messageUrl: "http://sub0000499082.hmk-temp.com/redsmylife/config.json?teamId=gamba"
     //動画のソースURL
     ,videoUrl: "http://sub0000499082.hmk-temp.com/redsmylife/video.json?teamId=gamba"
+    //報告URL
+    ,reportUrl: "http://sub0000499082.hmk-temp.com/redsmylife/report.json?teamId=gamba"
     //開発元メールアドレス
     ,developerMail: "motoy3d+smartj@gmail.com"
     ,newsEntriesPerPage: 50

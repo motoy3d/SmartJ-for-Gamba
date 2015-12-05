@@ -28,7 +28,7 @@ function TwitterWindow(tabGroup, target) {
     
     // インジケータ
     var indicator = Ti.UI.createActivityIndicator({
-        style: util.isiPhone()? Ti.UI.iPhone.ActivityIndicatorStyle.PLAIN : Ti.UI.ActivityIndicatorStyle.BIG
+        style: util.isiOS()? Ti.UI.iPhone.ActivityIndicatorStyle.PLAIN : Ti.UI.ActivityIndicatorStyle.BIG
     });
     self.add(indicator);
     
@@ -110,6 +110,7 @@ function TwitterWindow(tabGroup, target) {
             listView.sections[0].updateItemAt(itemIndex, item);
         }
         var optionBtn = Ti.UI.createButton({image: "/images/gear.png"});
+        //TODO 報告、ブロック
         optionBtn.addEventListener("click", function(){
             alert("報告、ブロック");
         });
@@ -129,7 +130,7 @@ function TwitterWindow(tabGroup, target) {
         Ti.API.info('web=' + web);
         win.add(web);
         var webIndicator = Ti.UI.createActivityIndicator({
-            style: util.isiPhone()? Ti.UI.iPhone.ActivityIndicatorStyle.DARK : Ti.UI.ActivityIndicatorStyle.BIG
+            style: util.isiOS()? Ti.UI.iPhone.ActivityIndicatorStyle.DARK : Ti.UI.ActivityIndicatorStyle.BIG
         });
         win.add(webIndicator);
         webIndicator.show();
@@ -159,7 +160,7 @@ function TwitterWindow(tabGroup, target) {
         imageArrow.transform=Ti.UI.create2DMatrix();
         imageArrow.show();
         //TODO Android
-        if (util.isiPhone()) {
+        if (util.isiOS()) {
             listView.setContentInsets({top:0}, {animated:true});
         }
     }
@@ -177,7 +178,7 @@ function TwitterWindow(tabGroup, target) {
         imageArrow.hide();
         actInd.show();
         //TODO Android
-        if (util.isiPhone()) {
+        if (util.isiOS()) {
             listView.setContentInsets({top:80}, {animated:true});
         }
         setTimeout(function(){
@@ -278,7 +279,7 @@ function TwitterWindow(tabGroup, target) {
                                     listView.sections = sections;
                                 }
                                 Ti.API.debug('最新データ読み込み  件数＝' + rowsData.length);
-                                var appendIdx = util.isiPhone()? 0 : 1;
+                                var appendIdx = util.isiOS()? 0 : 1;
                                 dataSection.insertItemsAt(appendIdx, rowsData);
                             }
                         }

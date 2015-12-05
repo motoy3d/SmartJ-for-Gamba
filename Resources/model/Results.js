@@ -115,7 +115,7 @@ function Results(resultsWindow, otherTeamId, otherTeamName) {
             }
 		}
 		//Ti.API.info('★' + isHome + " : " + team + " : " + score + " : " + detailUrl);
-		var hasDetailResult = detailUrl != "";
+		var hasDetailResult = detailUrl != "" && detailUrl != null;
 		//Ti.API.debug(compe + " " + date + " " + time + " " + team + " " + stadium + " " + score);
 		// Ti.API.debug("hasDetailResult=" + hasDetailResult);
 		var row = Ti.UI.createTableViewRow(style.results.tableViewRow);

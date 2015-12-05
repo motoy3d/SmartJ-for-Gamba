@@ -6,7 +6,7 @@ function ConfigWindow(webData) {
     var style = require("/util/style").style;
     var config = require("/config").config;
     var social;
-    if(util.isiPhone()) {
+    if(util.isiOS()) {
         social = require('de.marcelpociot.social');
     }
 
@@ -14,41 +14,7 @@ function ConfigWindow(webData) {
 	self.barColor = style.common.barColor;
     var table = Ti.UI.createTableView(style.config.tableView);
     self.add(table);
-    
-    // 簡易記事モード //iPhoneのみとしておく
-    if(util.isiPhone()){
-        var dispModeRow = Ti.UI.createTableViewRow({
-            width: Ti.UI.FILL
-            ,height: 50
-        });
-        var simpleDispModeLabel = Ti.UI.createLabel({
-            text: "簡易記事モード(高速)"
-            ,color: "white"
-            ,left: 15
-        });
-        dispModeRow.add(simpleDispModeLabel);
-        
-        var simpleDispModeProp = Ti.App.Properties.getBool("simpleDispMode");
-        Ti.API.info('dispModeProp=========' + simpleDispModeProp);
-        if(simpleDispModeProp == null || simpleDispModeProp == undefined) {
-            simpleDispModeProp = false;
-        }
-        var simpleDispModeSwitch = Ti.UI.createSwitch({
-            value: simpleDispModeProp
-            ,right: 10
-            ,verticalAlign: "center"
-            // ,top: 20
-        });
-        //プロパティ保存
-        simpleDispModeSwitch.addEventListener("change", function(){
-            Ti.App.Properties.setBool("simpleDispMode", simpleDispModeSwitch.value);
-        });
-        dispModeRow.add(simpleDispModeSwitch);
-        table.appendRow(dispModeRow);
-    } else {
-        table.appendRow(Ti.UI.createTableViewRow());
-    }
-        
+            
     // 友達にLINEですすめる    
     var lineRow = Ti.UI.createTableViewRow(style.config.lineRow);
     table.appendRow(lineRow);
@@ -85,7 +51,7 @@ function ConfigWindow(webData) {
         }
         else if(e.index == 3) { //twitterでつぶやく
             Ti.App.Analytics.trackPageview('/twitterDialogForAppShare');
-            if(util.isiPhone()) {
+            if(util.isiOS()) {
                 social.showSheet({
                     service:  'twitter',
                     message:  config.appName + "  " + util.getAppUrl() + " #" + config.hashtag,
@@ -95,7 +61,7 @@ function ConfigWindow(webData) {
                         Ti.App.Analytics.trackPageview('/tweetForAppShare');
                     },
                     error: function(){
-                        alert("iPhoneの設定でTwitterアカウントを登録してください。");
+                        util.showMsg("iPhoneの設定でTwitterアカウントを登録してください。");
                     }
                 });
             } else {
@@ -106,7 +72,7 @@ function ConfigWindow(webData) {
         }
         else if(e.index == 4) { //FBでシェア
             Ti.App.Analytics.trackPageview('/fbShareDialogForAppShare');
-            if(util.isiPhone()) {
+            if(util.isiOS()) {
                 social.showSheet({
                     service:  'facebook',
                     message:  config.appName + "  " + util.getAppUrl() + "  #" + config.hashtag,
@@ -116,7 +82,7 @@ function ConfigWindow(webData) {
                         Ti.App.Analytics.trackPageview('/fbShareForAppShare');
                     },
                     error: function(){
-                        alert("iPhoneの設定でFacebookアカウントを登録してください。");
+                        util.showMsg("iPhoneの設定でFacebookアカウントを登録してください。");
                     }
                 });
             } else {
