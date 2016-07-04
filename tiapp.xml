@@ -6,7 +6,7 @@
     <publisher>Motoi Kataoka</publisher>
     <url>http://motoy3d.blogspot.com</url>
     <description>ガンバ大阪アプリ！</description>
-    <copyright>2015 by Motoi Kataoka</copyright>
+    <copyright>2016 by Motoi Kataoka</copyright>
     <icon>appicon.png</icon>
     <navbar-hidden>true</navbar-hidden>
     <analytics>false</analytics>
@@ -93,6 +93,6 @@
         <target device="iphone">true</target>
         <target device="mobileweb">false</target>
     </deployment-targets>
-    <sdk-version>5.1.1.GA</sdk-version>
+    <sdk-version>5.3.0.GA</sdk-version>
     <property name="appc-app-id" type="string">560d1801c120a0eb300fad5a</property>
 </ti:app>

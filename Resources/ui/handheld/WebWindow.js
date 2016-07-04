@@ -68,18 +68,18 @@ function WebWindow(webData, callback) {
 				        	Ti.API.info('domainEndSlashIdx=' + domainEndSlashIdx);
 				        	var site = "";
 				        	if (domainEndSlashIdx == -1) {	//ドメイン直下の場合
-				        		site = webView.url;
+				        		site = webData.link;
 			        		} else {
-			        			var idx2 = webView.url.indexOf("/", domainEndSlashIdx+1);
+			        			var idx2 = webData.link.indexOf("/", domainEndSlashIdx+1);
 			        			Ti.API.info('idx2=' + idx2);
-					        	site = webView.url.substring(0, idx2 + 1);
+					        	site = webData.link.substring(0, idx2 + 1);
 			        		}
 			        		if (!site) {
 			        			return;
 			        		}
 			        		var rows = db.execute("SELECT COUNT(*) FROM blockSite WHERE url = '" + site + "'");
 			        		if (rows.isValidRow() && rows.field(0) == 0) {
-				        		Ti.API.info('ブロック：' + site + "    (" + webView.url + "), " + date);
+				        		Ti.API.info('ブロック：' + site + "    (" + webData.link + "), " + date);
 					            db.execute('INSERT INTO blockSite(url, date) VALUES(?, ?)', site, date);
 			        		}
 				            util.showMsg("ブロックしました");

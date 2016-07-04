@@ -84,6 +84,9 @@ function News() {
                     rowsData = dataList.map(
                         function(item) {
                             var row = createNewsRow(item);
+                            if (row == null) {
+                            	return null;	//ブロック
+                            }
                             var pubDateNum = item.published_date_num;
                             if(newest_item_timestamp < pubDateNum) {
                                 newest_item_timestamp = pubDateNum;
@@ -102,7 +105,15 @@ function News() {
                     }
                 }
                 Ti.API.info("読み込み終了");
-                callback.success(rowsData, newest_item_timestamp, oldest_item_timestamp);
+                var rowsData2 = new Array();
+                var rowsData2Idx = 0;
+                for (var i=0; i<rowsData.length; i++) {
+                	if (rowsData[i]) {
+	                	rowsData2[rowsData2Idx] = rowsData[i];
+	                	rowsData2Idx++;
+	                }
+                }
+                callback.success(rowsData2, newest_item_timestamp, oldest_item_timestamp);
             } catch(ex) {
                 Ti.API.error("loadNewsFeedエラー：" + ex);
                 callback.fail('読み込みに失敗しました');
@@ -166,6 +177,12 @@ function News() {
         var isVisited = util.contains(visitedUrlList, link);
         // ブロック確認
         var isBlocked = util.containsStartsWith(blockSiteList, link);
+        Ti.API.info("ブロックサイトリスト：" + util.toString(blockSiteList));
+        Ti.API.info('link=' + link);
+        Ti.API.info('ブロック？ ' + isBlocked);
+        if (isBlocked) {
+        	return null;
+        }
         // サイト名
         var fullSiteName = item.site_name;
         if(fullSiteName.toString().indexOf("Google") == 0) {

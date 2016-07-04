@@ -35,13 +35,13 @@ function ConfigWindow(webData) {
     table.appendRow(mailToDeveloperRow);
     
     table.addEventListener("click", function(e){
-        if(e.index == 1) { //友達にLINEですすめる
+        if(e.index == 0) { //友達にLINEですすめる
             Ti.App.Analytics.trackPageview('/lineDialogForAppShare');
             var msg = encodeURIComponent(config.appName + "  ") + util.getAppUrl();
             Ti.API.info("LINEへのパラメータ=" + msg);
             Ti.Platform.openURL("line://msg/text/" + msg);
         }
-        else if(e.index == 2) { //友達にメールですすめる
+        else if(e.index == 1) { //友達にメールですすめる
             Ti.App.Analytics.trackPageview('/mailDialogForAppShare');
             var dialog = Ti.UI.createEmailDialog({
                 subject: config.appName
@@ -49,7 +49,7 @@ function ConfigWindow(webData) {
             });
             dialog.open();
         }
-        else if(e.index == 3) { //twitterでつぶやく
+        else if(e.index == 2) { //twitterでつぶやく
             Ti.App.Analytics.trackPageview('/twitterDialogForAppShare');
             if(util.isiOS()) {
                 social.showSheet({
@@ -70,7 +70,7 @@ function ConfigWindow(webData) {
                     ,config.appName + "  " + util.getAppUrl() + " #" + config.hashtag);
             }
         }
-        else if(e.index == 4) { //FBでシェア
+        else if(e.index == 3) { //FBでシェア
             Ti.App.Analytics.trackPageview('/fbShareDialogForAppShare');
             if(util.isiOS()) {
                 social.showSheet({
@@ -89,12 +89,12 @@ function ConfigWindow(webData) {
                 util.sendToApp("com.facebook.katana", null, config.appName + "  " + util.getAppUrl() + " #" + config.hashtag);
             }
         }
-        else if(e.index == 5) { //アプリレビュー
+        else if(e.index == 4) { //アプリレビュー
             Ti.API.info('アプリレビュー');
             Ti.App.Analytics.trackPageview('/appReview');
             Ti.Platform.openURL(util.getAppUrl());
         }
-        else if(e.index == 6) { //開発元にメールする
+        else if(e.index == 5) { //開発元にメールする
             Ti.App.Analytics.trackPageview('/mailToDeveloper');
             var dialog = Ti.UI.createEmailDialog({
                 toRecipients: [config.developerMail]

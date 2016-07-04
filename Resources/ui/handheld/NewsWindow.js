@@ -222,14 +222,13 @@ function NewsWindow(tabGroup) {
 	                	var items = listView.sections[0].items;
 	                	Ti.API.info('items.length 1 = ' + items.length);
 	                	for(var i=0; i<items.length; i++) {
-	                		Ti.API.info(i + ' 🌟リンク ' + items[i].link);
+	                		//Ti.API.info(i + ' 🌟リンク ' + items[i].link);
 	                		if (items[i].link.indexOf(site) == 0) {
-		                		Ti.API.info('削除 ' + i);
+		                		Ti.API.info(i + ' 削除 ' + items[i].link);
 	                			listView.sections[0].deleteItemsAt(i, 1);
-	                			Ti.API.info('deleteItemsAt done');
 	                			i--;
 	                			items = listView.sections[0].items;
-	                			Ti.API.info('items.length 2 = ' + items.length);
+	                			//Ti.API.info('items.length 2 = ' + items.length);
 	                		}
 	                	}
 	                }

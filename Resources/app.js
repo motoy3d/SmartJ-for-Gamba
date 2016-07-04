@@ -140,10 +140,11 @@ function initDB() {
     db.execute(deleteSql);
     // ユーザがブロックしたサイト
     db.execute('CREATE TABLE IF NOT EXISTS blockSite (url TEXT, date TEXT)');
+    // ユーザがブロックしたtwitterユーザー
+    db.execute('CREATE TABLE IF NOT EXISTS blockTwitterUser (userScreenName TEXT, date TEXT)');
     
     //TODO テスト
-    db.execute("delete from blockSite");
-    
+    //db.execute("delete from blockSite");
     
     
 	db.close();

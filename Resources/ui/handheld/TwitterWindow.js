@@ -7,6 +7,7 @@ function TwitterWindow(tabGroup, target) {
     var Twitter = require("/model/Twitter");
     var util = require("/util/util").util;
     var style = require("/util/style").style;
+    var config = require("/config").config;
     var twitter = new Twitter(target);
     var initLoaded = false;
 
@@ -103,26 +104,90 @@ function TwitterWindow(tabGroup, target) {
      */
     function openEntryWin(itemIndex) {
         var item = listView.sections[0].items[itemIndex];
-
+        var win = Ti.UI.createWindow(style.twitter.webWindow);
+        
         if(util.isAndroid()) {
-            var item = listView.sections[0].items[itemIndex];
             item.content.color = "#38e";
             listView.sections[0].updateItemAt(itemIndex, item);
         }
-        var optionBtn = Ti.UI.createButton({image: "/images/gear.png"});
-        //TODO 報告、ブロック
-        optionBtn.addEventListener("click", function(){
-            alert("報告、ブロック");
-        });
-        var win = Ti.UI.createWindow(style.twitter.webWindow);
+        var optionBtn = Ti.UI.createButton({systemButton:Ti.UI.iPhone.SystemButton.ACTION});
+        // 報告、ブロック
+		var opts = {
+			options: ['リンクをコピー', 'Safariで開く', 'ブロック', '報告', 'キャンセル'],
+			cancel: 4,
+			destructive: 0
+		};
+		optionBtn.addEventListener('click', function(e){
+			var dialog = Ti.UI.createOptionDialog(opts);
+			dialog.addEventListener('click', function(e) {
+				if (e.index == 0) {	//リンクをコピー
+					Ti.UI.Clipboard.setText(item.url);
+				} else if (e.index == 1) {	//Safariで開く
+					Ti.Platform.openURL(item.url);
+				} else if (e.index == 2) {	//ブロック
+					var dialog = Ti.UI.createAlertDialog({
+						title: ""
+						,message: "このユーザーをブロックして、今後表示しないようにしますか？"
+						,buttonNames: ["OK", "キャンセル"]
+					});
+					dialog.addEventListener('click', function(e){
+						if (e.index == 0) {
+					        var db = Ti.Database.open(config.dbName);
+					        try {
+					        	var date = util.formatDate();
+				        		var rows = db.execute("SELECT COUNT(*) FROM blockTwitterUser WHERE userScreenName = '" + item.userScreenName + "'");
+				        		if (rows.isValidRow() && rows.field(0) == 0) {
+					        		Ti.API.info('ブロック：' + item.userScreenName + ",   " + date);
+						            db.execute('INSERT INTO blockTwitterUser(userScreenName, date) VALUES(?, ?)', item.userScreenName, date);
+				        		}
+					            util.showMsg(item.userScreenName + "をブロックしました。");
+					            //Ti.App.tabGroup.removeTab();
+					            win.close();
+					            removeBlockedUser(item.userScreenName);
+					        } finally{
+					            db.close();
+					        }
+						}
+					});
+					dialog.show();
+				} else if (e.index == 3) {	//報告
+					var reportOpts = {
+						options: ['興味がない', '迷惑', 'キャンセル'],
+						cancel: 2,
+						destructive: 0
+					};
+					var reportDialog = Ti.UI.createOptionDialog(reportOpts);
+					reportDialog.addEventListener('click', function(e) {
+						if (e.index == 2) {
+							return;
+						}
+						var userId = Ti.App.Properties.getString("userId");
+					    var xhr = new XHR();
+					    var reportUrl = config.reportUrl + "&uid=" + userId + "&type=" + e.index +  "&twitterUserScreenName=" + escape(item.userScreenName);
+					    Ti.API.info('##### 報告: ' + reportUrl);
+					    xhr.get(reportUrl, onSuccessCallback, onErrorCallback);
+					    function onSuccessCallback(e) {
+					        Ti.API.info('報告完了');
+						};
+					    function onErrorCallback(e) {
+					        Ti.API.error('報告時エラー');
+						};
+						util.showMsg("ご報告ありがとうございました。");
+			            //self.close();
+					});
+					reportDialog.show();
+				}
+			});
+			dialog.show();
+		});
+
         win.rightNavButton = optionBtn;
         //win.orientationModes = [Ti.UI.PORTRAIT];
         if (util.isAndroid()) {
             win.tabBarHidden = true;
         }
-        var entryData = listView.sections[0].items[itemIndex];
         var web = Ti.UI.createWebView({
-            url: entryData.url
+            url: item.url
         });
         if (util.isAndroid()) {
             web.softKeyboardOnFocus = Ti.UI.Android.SOFT_KEYBOARD_HIDE_ON_FOCUS;
@@ -245,7 +310,6 @@ function TwitterWindow(tabGroup, target) {
                         if("firstTime" == kind) {
                             if(rowsData) {
                                 Ti.API.info("rowsData = " + util.toString(rowsData[0]));
-                                Ti.API.info("postImage = " + rowsData[0].postImage);
                                 if(util.isAndroid()) {   // リロードボタンの行を１番目に挿入
                                      rowsData.unshift(
                                         {
@@ -303,6 +367,25 @@ function TwitterWindow(tabGroup, target) {
                 }
             }
         );
+    }
+
+	/*
+	 * ブロックユーザーをリストから削除するcallback
+	 */
+    function removeBlockedUser(userScreenName) {
+    	//alert("removeBlockedUser = " + userScreenName);
+    	var items = listView.sections[0].items;
+    	Ti.API.info('items.length 1 = ' + items.length);
+    	for(var i=0; i<items.length; i++) {
+    		//Ti.API.info(i + ' 🌟リンク ' + items[i].link);
+    		if (items[i].userScreenName == userScreenName) {
+        		Ti.API.info(i + ' 削除 ' + items[i].userScreenName);
+    			listView.sections[0].deleteItemsAt(i, 1);
+    			i--;
+    			items = listView.sections[0].items;
+    			//Ti.API.info('items.length 2 = ' + items.length);
+    		}
+    	}
     }
     return self;
 }

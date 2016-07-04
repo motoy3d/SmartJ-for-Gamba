@@ -286,11 +286,13 @@ exports.util = {
      * itemが配列内の値で始まるものが含まれるかどうかを返す
      */
     containsStartsWith : function(array, item) {
-        for(var i in array) {
-            if(item.indexOf(array[i]) == 0) {
-                return true;
-            }
-        }
+    	if (array) {
+	        for(var i in array) {
+	            if(item.indexOf(array[i]) == 0) {
+	                return true;
+	            }
+	        }
+		}
         return false;
     },
     /**
