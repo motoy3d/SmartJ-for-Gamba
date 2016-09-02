@@ -217,13 +217,10 @@ function News() {
                 ,height: imgUrl? dispImgHeight : 0
             }
             ,title: {
-            	
-            	//TODO ブロックテスト
-                text: isBlocked? "（ブロック）" + itemTitle : itemTitle
-                
-                
-                
-                , left: imgUrl? dispImgWidth + 10 : 6
+            	// ブロックテスト
+                //text: isBlocked? "（ブロック）" + itemTitle : itemTitle
+                text: itemTitle
+                ,left: imgUrl? dispImgWidth + 10 : 6
                 , height: imgUrl? dispImgHeight : Ti.UI.SIZE
             }
             ,siteNameAndDatetime: {text: siteName + "   " + pubDateText}

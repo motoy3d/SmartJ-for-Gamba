@@ -57,7 +57,7 @@ exports.style = {
                         ,events: {
                             //load: function(e){Ti.API.info('■■■image loaded. ');},	//何故かエラーになる
                             error: function(e){
-                                var util = require("/common/util").util;
+                                var util = require("/util/util").util;
                                 Ti.API.error('■■■画像読み込みエラー　 ' + util.toString(e.source));
                             }
                         }
@@ -213,6 +213,13 @@ exports.style = {
         },
         mailToDeveloperRow : {
             title: "開発元にメールする📩"
+            ,color: "white"
+            ,width: Ti.UI.FILL
+            ,hasChild: true
+            ,height: 55
+        },
+        ruleRow : {
+            title: "利用規約"
             ,color: "white"
             ,width: Ti.UI.FILL
             ,hasChild: true
@@ -482,9 +489,9 @@ exports.style = {
                             ,backgroundColor: '#000'
                         },
                         events: {
-                            load: function(e){var util = require("/common/util").util; Ti.API.info('■■■image loaded. ' + util.toString(e.source));},
+                            load: function(e){var util = require("/util/util").util; Ti.API.info('■■■image loaded. ' + util.toString(e.source));},
                             error: function(e){
-                                var util = require("/common/util").util;
+                                var util = require("/util/util").util;
                                 Ti.API.error('■■■画像読み込みエラー　 ' + util.toString(e.source));
                             }
                         }

@@ -10,18 +10,20 @@ exports.config = {
     ,tintColor: 'white'
     ,standingsBgcolor: '#0000ff'
     ,dbName: 'smartj.gamba'
+    //URLベース
+    ,urlBase: 'https://smartj.mobi/redsmylife/'
     //ニュースのソースURL
-    ,feedUrlBase: 'http://sub0000499082.hmk-temp.com/redsmylife/news.json'
+    ,feedUrlBase: 'https://smartj.mobi/redsmylife/news.json'
     //日程・結果のソースURL
-    ,resultsUrl: "http://sub0000499082.hmk-temp.com/redsmylife/results.json?teamId=gamba&season="
+    ,resultsUrl: "https://smartj.mobi/redsmylife/results.json?teamId=gamba&season="
     //順位表のソースURL
-    ,standingsUrl: 'http://sub0000499082.hmk-temp.com/redsmylife/standings.json'
+    ,standingsUrl: 'https://smartj.mobi/redsmylife/standings.json'
     //設定、メッセージのソースURL
-    ,messageUrl: "http://sub0000499082.hmk-temp.com/redsmylife/config.json?teamId=gamba"
+    ,messageUrl: "https://smartj.mobi/redsmylife/config.json?teamId=gamba"
     //動画のソースURL
-    ,videoUrl: "http://sub0000499082.hmk-temp.com/redsmylife/video.json?teamId=gamba"
+    ,videoUrl: "https://smartj.mobi/redsmylife/video.json?teamId=gamba"
     //報告URL
-    ,reportUrl: "http://sub0000499082.hmk-temp.com/redsmylife/report.json?teamId=gamba"
+    ,reportUrl: "https://smartj.mobi/redsmylife/report.json?teamId=gamba"
     //開発元メールアドレス
     ,developerMail: "motoy3d+smartj@gmail.com"
     ,newsEntriesPerPage: 50

@@ -12,7 +12,7 @@ function Twitter(target) {
     self.loadTweets = loadTweets;
     var tweetsPerPage = 25;
     var urlBase = 
-        "http://sub0000499082.hmk-temp.com/redsmylife/" + target + ".json"
+        config.urlBase + target + ".json"
         + "?teamId=" + config.teamId + "&count=" + tweetsPerPage;
     var blockUserList = getBlockedUserList();
 
@@ -95,8 +95,9 @@ function Twitter(target) {
 //                            ,postImage: {image: profileImage, height: item.image_url? 240 : 0}
                             ,postImage: {image: item.image_url, height: item.image_url? 240 : 0}
                             ,userProfileImage: {image: item.user_profile_image_url}
-                            //TODO ブロック確認
-                            ,userName: {text: (isBlocked?"(ブロック)" : "") + item.user_name}
+                            // ブロック確認
+                            //,userName: {text: (isBlocked?"(ブロック)" : "") + item.user_name}
+                            ,userName: {text: item.user_name}
                             ,userScreenName: item.user_screen_name
                             ,publishedDatetime: item.created_at 
                             ,time: {text: timeText}

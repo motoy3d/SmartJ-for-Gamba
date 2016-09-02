@@ -170,7 +170,7 @@ function WebWindow(webData, callback) {
             if(!ind && e.navigationType != 5) {//リンク先URLのhtml中の画像やiframeの場合、5
                 Ti.API.info('beforeload #################### ');
                 Ti.API.info("e = " + util.toString(e));
-                webView.opacity = 0.8;
+                //webView.opacity = 0.8;
                 //Ti.API.info(util.formatDatetime2(new Date()) + '  インジケータshow');
 //                webView.add(ind);
 //TODO style

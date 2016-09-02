@@ -9,9 +9,15 @@
 	// 起動回数保存
 	var launchAppCount = Ti.App.Properties.getInt("LaunchAppCount");
 	if (!launchAppCount) {
-	    launchAppCount = 0;
-	    Ti.App.Properties.setBool("shareAndReviewDoneFlg", false);		//起動回数
+	    launchAppCount = 0;	//起動回数
+	    Ti.App.Properties.setBool("shareAndReviewDoneFlg", false);	
 	}
+	var eulaDone = Ti.App.Properties.getBool("eulaDone");
+    // 利用規約表示
+	if (!eulaDone) {
+		openEULA();
+	}
+
 	Ti.App.Properties.setInt("LaunchAppCount", ++launchAppCount);
 	Ti.API.info('アプリ起動 : ' + launchAppCount);
 	// ユーザーID保存
@@ -114,8 +120,8 @@
             dialog.show();
         }
         // シェア・レビュー依頼
-        if (launchAppCount == 5 || launchAppCount % 15 == 0) {
-            // openShareAndReviewWindow();
+        if ((launchAppCount == 5 || launchAppCount % 15 == 0) && eulaDone) {
+        	openShareAndReviewWindow();
         }
     };
     function onErrorCallback(e) {
@@ -142,12 +148,9 @@ function initDB() {
     db.execute('CREATE TABLE IF NOT EXISTS blockSite (url TEXT, date TEXT)');
     // ユーザがブロックしたtwitterユーザー
     db.execute('CREATE TABLE IF NOT EXISTS blockTwitterUser (userScreenName TEXT, date TEXT)');
-    
-    //TODO テスト
+    // テスト
     //db.execute("delete from blockSite");
-    
-    
-	db.close();
+    db.close();
 }
 
 /**
@@ -174,6 +177,56 @@ function startAnalytics() {
 	    }
 	};
 	analytics.start(7);	//7秒に1回データ送信
+}
+
+/**
+ *  利用規約を表示する。（初回起動時）
+ */
+function openEULA() {
+	var style = require("/util/style").style;
+	var config = require("/config").config;
+	var ruleWin = Ti.UI.createWindow();
+	
+	var navbar = Ti.UI.createView({
+		width: Ti.UI.FILL
+		,height: 40
+		,top: 20
+		,backgroundColor: style.common.barColor
+	});
+	var titleLabel = Ti.UI.createLabel({text: "利用規約", color: style.common.navTintColor});
+	navbar.add(titleLabel);
+	ruleWin.add(navbar);
+
+    var webView = Ti.UI.createWebView({
+    	height:Ti.UI.SIZE
+    	,width:Ti.UI.FILL
+		,top: 60
+		,bottom: 50
+	});
+    webView.url = "rules.html";
+	ruleWin.add(webView);
+	
+	var toolbar = Ti.UI.createView({
+		width: Ti.UI.FILL
+		,height: 50
+		,bottom: 0
+		,backgroundColor: "#ccc"
+	});
+	var closeBtn = Ti.UI.createButton({
+		title: "同意する"
+		,borderSize: 1
+		,borderRadius: 1
+	});
+	closeBtn.addEventListener("click", function(){
+		Ti.App.Properties.setBool("eulaDone", true);	//同意済フラグを保存
+		ruleWin.close();
+	});
+	toolbar.add(closeBtn);
+	ruleWin.add(toolbar);
+	ruleWin.open({
+		modal: true
+		,animated: false
+	});
 }
 
 /**

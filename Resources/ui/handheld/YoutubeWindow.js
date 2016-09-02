@@ -119,7 +119,7 @@ function YoutubeWindow(title, gameDate, otherTeamId) {
             row.videoTitle = title;
             row.backgroundColor = "#000000";
             row.color = "#ffffff";
-           //TODO
+           //TODO style
             var img = Ti.UI.createImageView({
                 image : thumbnail
                 ,top: 0

@@ -33,6 +33,9 @@ function ConfigWindow(webData) {
     // 開発元にメールする    
     var mailToDeveloperRow = Ti.UI.createTableViewRow(style.config.mailToDeveloperRow);
     table.appendRow(mailToDeveloperRow);
+    // 利用規約    
+    var ruleRow = Ti.UI.createTableViewRow(style.config.ruleRow);
+    table.appendRow(ruleRow);
     
     table.addEventListener("click", function(e){
         if(e.index == 0) { //友達にLINEですすめる
@@ -102,6 +105,22 @@ function ConfigWindow(webData) {
                 ,messageBody: ""
             });
             dialog.open();
+        }
+        else if(e.index == 6) { //利用規約
+            Ti.App.Analytics.trackPageview('/rule');
+            var webView = Ti.UI.createWebView();
+            webView.url = "rules.html";
+			var ruleWin = Ti.UI.createWindow({
+				title: "利用規約"
+			    ,backgroundColor: 'black'
+			    ,barColor: style.common.barColor
+			    ,navTintColor: style.common.navTintColor
+			    ,titleAttributes: {
+			        color: style.common.navTintColor
+			    }
+			});
+			ruleWin.add(webView);
+			Ti.App.tabGroup.activeTab.open(ruleWin, {animated: true});
         }
     });
 	return self;
