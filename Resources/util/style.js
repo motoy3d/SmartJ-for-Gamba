@@ -8,7 +8,8 @@ exports.style = {
 		loadingFailMsg : '読み込みに失敗しました',
 		noDataMsg : '該当データが見つかりませんでした',
 		noMovieMsg : '動画が見つかりませんでした',
-		mainTextColor : 'white',
+		backgroundColor: config.backgroundColor,
+		mainTextColor : config.mainTextColor,
 		rowBgSelectedColor : "#f66",
 		indicator : {
 			font: {
@@ -20,14 +21,14 @@ exports.style = {
 		}
 	},
     tabsAndroid : {
-        tabsBackgroundColor: "black"
+        tabsBackgroundColor: config.backgroundColor
         ,activeTabBackgroundColor: "white"
     },
 	news : {
         listView : {
             separatorColor: '#666'
             ,allowsSelection: true
-            ,backgroundColor: "black"
+            ,backgroundColor: config.backgroundColor
             ,top: 0 //80
         },
         listViewTemplate : [
@@ -39,7 +40,6 @@ exports.style = {
                     ,left: 6
                     ,right: 6
                     ,height: Ti.UI.SIZE
-//                    ,backgroundColor: '#000'
                 },
                 childTemplates: [
                     {
@@ -51,7 +51,7 @@ exports.style = {
                             ,width: 200
                             //,height: 100
                             ,borderRadius: 1
-                            ,backgroundColor: "#202020"
+                            ,backgroundColor: config.backgroundColor
                             ,defaultImage: ""
                         }
                         ,events: {
@@ -67,8 +67,7 @@ exports.style = {
                         type: 'Ti.UI.Label',
                         bindId: 'title',    //タイトルラベル
                         properties: {
-                            color: '#fff'
-//                            ,backgroundColor: '#000'
+                            color: config.mainTextColor
                             ,font: {fontSize: 16}
                             ,top: 0
                             ,left: 150
@@ -84,7 +83,6 @@ exports.style = {
                 bindId: 'siteNameAndDatetime',    //サイト名＋日時ラベル
                 properties: {
                     color: '#A3A3A3'
-//                            ,backgroundColor: '#000'
                     ,font: {fontSize: 14}
                     ,bottom: 10
                     ,right: 4
@@ -115,6 +113,17 @@ exports.style = {
                     height: "38dp",
                     top : "2dp",
                     right : "10dp"
+                }
+            },
+            {
+                type: 'Ti.UI.Button',
+                bindId: 'otherTeamBtn',
+                properties: {
+                    backgroundImage: "/images/zoom@2x.png",
+                    width: "32dp",
+                    height: "32dp",
+                    top : "2dp",
+                    left : "10dp"
                 }
             }
         ],
@@ -147,7 +156,7 @@ exports.style = {
             ,width: '320dp'
             ,height: '75dp'
         },
-		visitedBgColor : '#457',
+		visitedBgColor : config.visitedBgColor,
 		webWindowToolbar : {
             animated: false, // true by default
             translucent: false, // true for iOS 7+, false otherwise
@@ -159,7 +168,7 @@ exports.style = {
         window : {
             title: "設定"
             ,navBarHidden: false
-            ,backgroundColor: "black"
+            ,backgroundColor: config.backgroundColor
             ,navTintColor: config.tintColor
             ,tintColor: config.tintColor
             ,titleAttributes: {
@@ -167,7 +176,7 @@ exports.style = {
             }
         },
         tableView : {
-            backgroundColor: "black"
+            backgroundColor: config.backgroundColor
             ,separatorColor: '#888'
             //,separatorColor: 'black'
             ,allowsSelection: true
@@ -178,49 +187,49 @@ exports.style = {
         },
         lineRow : {
             title: "友達にLINEですすめる💚"
-            ,color: "white"
+            ,color: config.mainTextColor
             ,width: Ti.UI.FILL
             ,hasChild: true
             ,height: 55
         },
         mailRow : {
             title: "友達にメールですすめる📩"
-            ,color: "white"
+            ,color: config.mainTextColor
             ,width: Ti.UI.FILL
             ,hasChild: true
             ,height: 55
         },
         twitterRow : {
             title: "twitterでつぶやく🔵"
-            ,color: "white"
+            ,color: config.mainTextColor
             ,width: Ti.UI.FILL
             ,hasChild: true
             ,height: 55
         },
         fbRow : {
             title: "facebookでシェア💙"
-            ,color: "white"
+            ,color: config.mainTextColor
             ,width: Ti.UI.FILL
             ,hasChild: true
             ,height: 55
         },
         appReviewRow : {
             title: "レビューを書く（お願い🌟）"
-            ,color: "white"
+            ,color: config.mainTextColor
             ,width: Ti.UI.FILL
             ,hasChild: true
             ,height: 55
         },
         mailToDeveloperRow : {
             title: "開発元にメールする📩"
-            ,color: "white"
+            ,color: config.mainTextColor
             ,width: Ti.UI.FILL
             ,hasChild: true
             ,height: 55
         },
         ruleRow : {
             title: "利用規約"
-            ,color: "white"
+            ,color: config.mainTextColor
             ,width: Ti.UI.FILL
             ,hasChild: true
             ,height: 55
@@ -228,12 +237,13 @@ exports.style = {
     },
 	results : {
 	    table : {
-	        backgroundColor: 'black',
+	        backgroundColor: config.backgroundColor,
 	        separatorColor: 'gray',
+	        allowsSelection: false
 	    },
 		tableViewRow : {
 			height : 'auto',
-			backgroundColor : 'black',
+			backgroundColor : config.backgroundColor,
 //			backgroundSelectedColor : "#f66",
 			className : 'resultsTableRow',
 			type: 'CONTENT'
@@ -268,7 +278,7 @@ exports.style = {
 		},
 		teamLabel : {
 			width : 210,
-			color : 'white',
+			color : config.mainTextColor,
 			font : {fontSize : 19},
 			top : 51,
 			// bottom : 10,
@@ -281,7 +291,7 @@ exports.style = {
 			right : 60			
 		},
 		scoreLabel : {
-			color : 'white',
+			color : config.mainTextColor,
 			font : {fontSize : 25},
 			height : "auto",
 			top : 48,
@@ -289,34 +299,48 @@ exports.style = {
 			right : 10			
 		},
         scoreLabelSmall : {
-            color : 'white',
+			color : config.mainTextColor,
             font : {fontSize : 15},
             height : "auto",
             top : 48,
             // bottom : 10,
             right : 10          
         },
-		detailButton : {
-			backgroundImage : '/images/gameDetailBtn.png',
-			backgroundSelectedImage : '/images/gameDetailSelectedBtn.png',
-			color : 'white',
-			font : {fontSize : 17},
+		ticketButton : {
+			title: "チケット",
+			backgroundColor : config.resultsDetailBtnBgColorActive,
+			color : config.resultsDetailBtnColorActive,
+			font : {fontSize : 15, fontWeight: "bold"},
+			borderRadius : 6,
 			width : 84,
 			height : 37,
 			top : 90,
 			bottom : 8,
-			right : 112 //元々90			
+			right : 214
+		},
+		detailButton : {
+			title: "試合詳細",
+			backgroundColor : config.resultsDetailBtnBgColorActive,
+			color : config.resultsDetailBtnColorActive,
+			font : {fontSize : 15, fontWeight: "bold"},
+			borderRadius : 6,
+			width : 84,
+			height : 37,
+			top : 90,
+			bottom : 8,
+			right : 112 //元々90
 		},
 		movieButton : {
-			backgroundImage : '/images/movieSearchBtn.png',
-			backgroundSelectedImage : '/images/movieSearchSelectedBtn.png',
-			color : 'white',
-			font : {fontSize : 17},
+			title: "動画検索",
+			backgroundColor : config.resultsDetailBtnBgColorActive,
+			color : config.resultsDetailBtnColorActive,
+			font : {fontSize : 15, fontWeight: "bold"},
+			borderRadius : 6,
 			width : 84,
 			height : 37,
 			top : 90,
 			bottom : 8,
-			right : 10			
+			right : 10
 		},
 		otherTeamBtnAndroid : {
 		    title: "他チーム日程"
@@ -331,30 +355,31 @@ exports.style = {
 	},
 	standings : {
 	    backgroundColor : config.standingsBgcolor,
+	    teamFontColor : config.standingsTeamFontColor,
 	    standingsViewiPhone : {
 	        top : 0
-	        ,backgroundColor: "black"
+	        ,backgroundColor: config.backgroundColor
 	    },
         standingsViewAndroid : {
             top : 0
             ,bottom: 46
-            ,backgroundColor: "black"
+            ,backgroundColor: config.backgroundColor
         },
 	    table : {
             top: 37
             ,allowsSelection: false
             ,separatorColor: '#666'
-            ,backgroundColor: "black"
+            ,backgroundColor: config.backgroundColor
 	    },
 	    headerView : {
 	        top: 0
-	        ,backgroundColor: 'black'
+	        ,backgroundColor: config.backgroundColor
 	    },
 	    headerLabel : {
             height: 33,
             top : 1,
-            backgroundColor: 'black',
-            color: 'white'	        
+            backgroundColor: config.backgroundColor,
+            color: config.mainTextColor
 	    },
 	    border : {
             width: Ti.UI.FILL,
@@ -365,9 +390,17 @@ exports.style = {
 	    },
 	    tableViewRow : {
             height: 28
-            ,color: 'white'
-            ,backgroundColor: 'black'
+            ,color: config.mainTextColor
+            ,backgroundColor: config.backgroundColor
             ,className: "standingsTableRow"
+	    },
+	    tableViewShokakuLineRow : {
+            height: 2
+            ,backgroundColor: "#daa520"
+	    },
+	    tableViewKokakuLineRow : {
+            height: 2
+            ,backgroundColor: "#bbb"
 	    },
 	    compeButtonBar : {
 	        backgroundColor: config.color
@@ -383,7 +416,8 @@ exports.style = {
             ,backgroundColor: config.color
             ,borderRadius: 8
             ,height: 36
-            ,width: 70
+            ,width: 100
+            ,left: 0
 //            ,top: 5
         },
         jButtonAndroid : {
@@ -393,8 +427,9 @@ exports.style = {
             ,backgroundColor: config.color
             ,borderRadius: 8
             ,height: 36
-            ,width: 70
+            ,width: 100
             ,top: 5
+            ,left: 110
         },
         aclNabiscoButtonAndroid : {
             color: "white"
@@ -406,13 +441,14 @@ exports.style = {
             ,borderRadius: 8
             ,enabled: true
             ,height: 36
-            ,width: 70
+            ,width: 100
             ,top: 5
+            ,left: 220
         }
 	},
 	twitter : {
         webWindow : {
-            backgroundColor: 'black'
+            backgroundColor: config.backgroundColor
             ,barColor: config.color
             ,navTintColor: config.tintColor
 //            navBarHidden: true  
@@ -426,15 +462,15 @@ exports.style = {
         listView : {
             separatorColor: '#666'
             ,allowsSelection: true
-            ,backgroundColor: "black"
+            ,backgroundColor: config.backgroundColor
         },
         listViewTemplate : [
             {
                 type: 'Ti.UI.Label',
                 bindId: 'userName',    //名前ラベル
                 properties: {
-                    color: '#fff'
-                    ,backgroundColor: '#000'
+                    color: config.mainTextColor
+                    ,backgroundColor: config.backgroundColor
                     ,font: {fontSize: 16, fontWeight: 'bold'}
                     ,top: 4
                     ,left: 60
@@ -449,7 +485,7 @@ exports.style = {
                     ,width: 48
                     ,height: 48
                     ,borderRadius: 5
-                    ,backgroundColor: '#000'
+                    ,backgroundColor: config.backgroundColor
                 }
             },
             {
@@ -460,7 +496,7 @@ exports.style = {
                     ,left: 60
                     ,right: 6
                     ,height: Ti.UI.SIZE
-                    ,backgroundColor: '#000'
+                    ,backgroundColor: config.backgroundColor
                 },
                 childTemplates: [
                     {
@@ -468,8 +504,8 @@ exports.style = {
                         type: 'Ti.UI.Label',
                         bindId: 'content',
                         properties: {
-                            color: '#fff'
-                            ,backgroundColor: '#000'
+                            color: config.mainTextColor
+                            ,backgroundColor: config.backgroundColor
                             ,font: {fontSize: 16}
                             ,top: 0
                             ,left: 0
@@ -486,7 +522,7 @@ exports.style = {
                             ,left: 0
                             ,bottom: 6
                             ,height: 250
-                            ,backgroundColor: '#000'
+                            ,backgroundColor: config.backgroundColor
                         },
                         events: {
                             load: function(e){var util = require("/util/util").util; Ti.API.info('■■■image loaded. ' + util.toString(e.source));},
@@ -503,7 +539,7 @@ exports.style = {
                 bindId: 'time',    //日時ラベル
                 properties: {
                     color: '#ddd'
-                    ,backgroundColor: '#000'
+                    ,backgroundColor: config.backgroundColor
                     ,font: {fontSize: 12}
                     ,top: 24
                     //,bottom: 8
@@ -548,6 +584,15 @@ exports.style = {
             ,width: "32dp"
             ,top: "8dp"
             ,right: "10dp"
+        },
+        shareButton : {
+            backgroundImage: "/images/share.png"
+//            ,backgroundSelectedImage: "/images/line_icon_grey.png"
+            ,backgroundColor: 'transparent'
+            ,enabled: false
+            ,width: "32dp"
+            ,height: "32dp"
+            ,left: "20dp"
         },
         lineButton : {
             backgroundImage: "/images/line_icon.png"

@@ -15,7 +15,7 @@ function TwitterWindow(tabGroup, target) {
     var self = Ti.UI.createWindow({
         title: "twitter"
         ,navBarHidden: false
-        ,backgroundColor: 'black'
+        ,backgroundColor: style.common.backgroundColor
         ,barColor: style.common.barColor
         ,navTintColor: style.common.navTintColor
 //        ,rightNavButton: optionBtn
@@ -29,7 +29,7 @@ function TwitterWindow(tabGroup, target) {
     
     // インジケータ
     var indicator = Ti.UI.createActivityIndicator({
-        style: util.isiOS()? Ti.UI.iPhone.ActivityIndicatorStyle.PLAIN : Ti.UI.ActivityIndicatorStyle.BIG
+        style: util.isiOS()? Ti.UI.ActivityIndicatorStyle.DARK : Ti.UI.ActivityIndicatorStyle.BIG
     });
     self.add(indicator);
     
@@ -54,7 +54,7 @@ function TwitterWindow(tabGroup, target) {
         childTemplates : style.twitter.listViewTemplate,
         properties : {
             height : Ti.UI.SIZE
-            ,backgroundColor: '#000'
+            ,backgroundColor: style.common.backgroundColor
         }
     };
     // Android用
@@ -62,7 +62,7 @@ function TwitterWindow(tabGroup, target) {
         childTemplates : style.twitter.listViewRefreshTemplate,
         properties : {
             height : Ti.UI.SIZE
-            ,backgroundColor: '#000'
+            ,backgroundColor: style.common.backgroundColor
         }
     };
 
@@ -72,9 +72,9 @@ function TwitterWindow(tabGroup, target) {
             ,'refreshTemplate': refreshTemplate
         }
         ,defaultItemTemplate : 'template'
-        ,backgroundColor: '#000'
+        ,backgroundColor: style.common.backgroundColor
     });
-    Ti.API.debug("★style.twitter.listView.backgroundColor=" + style.twitter.listView.backgroundColor);
+    Ti.API.debug("★　style.twitter.listView.backgroundColor=" + style.twitter.listView.backgroundColor);
     listView.applyProperties(style.twitter.listView);
     var sections = [];
     var dataSection = Ti.UI.createListSection();
@@ -109,6 +109,8 @@ function TwitterWindow(tabGroup, target) {
         if(util.isAndroid()) {
             item.content.color = "#38e";
             listView.sections[0].updateItemAt(itemIndex, item);
+        	Ti.Platform.openURL(item.url);
+        	return;
         }
         var optionBtn = Ti.UI.createButton({systemButton:Ti.UI.iPhone.SystemButton.ACTION});
         // 報告、ブロック
@@ -195,7 +197,7 @@ function TwitterWindow(tabGroup, target) {
         Ti.API.info('web=' + web);
         win.add(web);
         var webIndicator = Ti.UI.createActivityIndicator({
-            style: util.isiOS()? Ti.UI.iPhone.ActivityIndicatorStyle.DARK : Ti.UI.ActivityIndicatorStyle.BIG
+            style: util.isiOS()? Ti.UI.ActivityIndicatorStyle.DARK : Ti.UI.ActivityIndicatorStyle.BIG
         });
         win.add(webIndicator);
         webIndicator.show();
@@ -252,7 +254,7 @@ function TwitterWindow(tabGroup, target) {
     }
     // ヘッダ(pull to refreshの行)
     var tableHeader = Ti.UI.createView({
-        backgroundColor:'#000',
+        backgroundColor: style.common.backgroundColor,
         width: Ti.UI.SIZE, height: 80
     });
     var border = Ti.UI.createView({
@@ -271,6 +273,7 @@ function TwitterWindow(tabGroup, target) {
       
     var actInd = Ti.UI.createActivityIndicator({
         /*left:20,*/ bottom:13
+        ,style: util.isiOS()? Ti.UI.ActivityIndicatorStyle.DARK : Ti.UI.ActivityIndicatorStyle.BIG
     });
     tableHeader.add(actInd);
     listView.pullView = tableHeader; 
@@ -288,7 +291,9 @@ function TwitterWindow(tabGroup, target) {
      */
     function load(kind) {
         if(util.isAndroid() && ("older" == kind || "newer" == kind)) {
-            indicator = Ti.UI.createActivityIndicator({style: Titanium.UI.ActivityIndicatorStyle.BIG});
+            indicator = Ti.UI.createActivityIndicator({
+            	style: util.isiOS()? Ti.UI.ActivityIndicatorStyle.DARK : Ti.UI.ActivityIndicatorStyle.BIG
+            	});
             self.add(indicator);
             Ti.API.info('indicator.show()');
         }

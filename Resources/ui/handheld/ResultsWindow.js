@@ -22,12 +22,12 @@ function ResultsWindow(tabGroup, otherTeamId, otherTeamName) {
 	var self = Ti.UI.createWindow({
 		title: otherTeamId? otherTeamName + " 日程" : "日程・結果"
         ,navBarHidden: false
-        ,backgroundColor: 'black'
-        ,barColor: style.common.barColor
-        ,navTintColor: style.common.navTintColor
+        ,backgroundColor: style.common.backgroundColor
+        ,barColor: otherTeamId? "#ccc" : style.common.barColor
+        ,navTintColor: otherTeamId?  "black" : style.common.navTintColor
         ,rightNavButton: refreshButton
         ,titleAttributes: {
-            color: style.common.navTintColor
+            color: otherTeamId?  "black" : style.common.navTintColor
         }
 	});
 	self.loadDetailHtml = loadDetailHtml;	//function
@@ -43,7 +43,7 @@ function ResultsWindow(tabGroup, otherTeamId, otherTeamName) {
     });
 	// インジケータ
     var indicator = Ti.UI.createActivityIndicator({
-        style: util.isiOS()? Ti.UI.iPhone.ActivityIndicatorStyle.PLAIN : Ti.UI.ActivityIndicatorStyle.BIG
+        style: util.isiOS()? Ti.UI.ActivityIndicatorStyle.PLAIN : Ti.UI.ActivityIndicatorStyle.BIG
     });
 	self.add(indicator);
 	
@@ -106,7 +106,7 @@ function ResultsWindow(tabGroup, otherTeamId, otherTeamName) {
                             if(util.isAndroid()) {
                                 tableView.scrollToIndex(rowIdx - 1);    
                             } else {
-                                tableView.scrollToIndex(rowIdx + 1);    
+                                tableView.scrollToIndex(rowIdx + 2);    
                             }
                         }
                     }
@@ -135,14 +135,19 @@ function ResultsWindow(tabGroup, otherTeamId, otherTeamName) {
 	 */
 	function loadDetailHtml(detailUrl) {
 		Ti.API.info("loadDetailHtml----------");
-		var webData = {
-			title : "試合詳細"
-			,link : detailUrl
-			,navBarHidden: true
-			,toolbarVisible: true
-		};
-		var webWindow = new WebWindow(webData);
-        tabGroup.activeTab.open(webWindow, {animated: true});
+        if (util.isAndroid()) {
+        	Ti.Platform.openURL(detailUrl);
+        } else {
+			var webData = {
+				title : "試合詳細"
+				,link : detailUrl
+				,navBarHidden: true
+				,toolbarVisible: true
+				,isBlockReportEnable : false
+			};
+			var webWindow = new WebWindow(webData);
+	        tabGroup.activeTab.open(webWindow, {animated: true});
+		}
 	}
 
 	/**
@@ -160,8 +165,10 @@ function ResultsWindow(tabGroup, otherTeamId, otherTeamName) {
         indicator.show();
         //ウィンドウ
         var otherTeamWin = Ti.UI.createWindow({
-            top: 20
+            width: "90%"
+            ,height: "94%"
             ,backgroundColor: "white"
+            ,modal: true
         });
         //タイトル
         var titleBar = Ti.UI.createLabel({
@@ -191,12 +198,14 @@ function ResultsWindow(tabGroup, otherTeamId, otherTeamName) {
                     var rows = new Array();
                     for(i=0; i<standingsDataList.length; i++) {
                         var data = standingsDataList[i];
-                        rows.push({
-                            title: "　" + data.teamFull
-                            ,teamId: data.teamId
-                            ,teamName: data.team
-                            ,color: "black"
-                        });
+                        if (config.teamId != data.teamId) {
+	                        rows.push({
+	                            title: "　" + data.teamFull
+	                            ,teamId: data.teamId
+	                            ,teamName: data.team
+	                            ,color: "black"
+	                        });
+	                    }
                     }
                     teamTable.setData(rows);
                 } catch(e) {
@@ -231,6 +240,7 @@ function ResultsWindow(tabGroup, otherTeamId, otherTeamName) {
             ,bottom: 0
         });
         if (util.isAndroid()) {
+        	closeBtn.backgroundColor = "#ccc";
             closeBtn.color = "black";
         }
         closeBtn.addEventListener("click", function(e){
@@ -239,7 +249,18 @@ function ResultsWindow(tabGroup, otherTeamId, otherTeamName) {
         otherTeamWin.add(titleBar);
         otherTeamWin.add(teamTable);
         otherTeamWin.add(closeBtn);
-        otherTeamWin.open();
+        if (util.isiOS()) {
+	        otherTeamWin.open({
+	        	modal : true
+	        	,modalTransitionStyle : Ti.UI.iPhone.MODAL_TRANSITION_STYLE_CROSS_DISSOLVE
+	        });
+	    } else {
+	        otherTeamWin.open({
+	        	modal : true
+	        	,activityEnterAnimation: Ti.Android.R.anim.fade_in
+	        	,activityExitAnimation: Ti.Android.R.anim.fade_out
+	        });
+	    }
     }
     /**
      * [Android用] 他チーム日程ツールバーを生成する。

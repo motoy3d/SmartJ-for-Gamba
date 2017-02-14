@@ -28,8 +28,9 @@ function YoutubeWindow(title, gameDate, otherTeamId) {
 
     var tableView = Ti.UI.createTableView({
         data : data
-        ,backgroundColor : "#000000"    //TODO style
-        ,separatorColor : "#000000"
+        //,backgroundColor : style.common.backgroundColor	//Youtubeのサムネイルの黒帯があるため黒固定
+        ,backgroundColor : style.common.backgroundColor    //TODO style
+        ,separatorColor : "black"
     });
     if (util.isiOS()) {
         tableView.scrollIndicatorStyle = Ti.UI.iPhone.ScrollIndicatorStyle.WHITE;        
@@ -43,7 +44,7 @@ function YoutubeWindow(title, gameDate, otherTeamId) {
     
     // インジケータ
     var ind = Ti.UI.createActivityIndicator({
-        style: util.isiOS()? Ti.UI.iPhone.ActivityIndicatorStyle.PLAIN : Ti.UI.ActivityIndicatorStyle.BIG
+        style: util.isiOS()? Ti.UI.ActivityIndicatorStyle.PLAIN : Ti.UI.ActivityIndicatorStyle.BIG
     });
     self.add(ind);
     ind.show();
@@ -117,9 +118,13 @@ function YoutubeWindow(title, gameDate, otherTeamId) {
             row.url = link;
             row.videoUrl = item.videoUrl;
             row.videoTitle = title;
-            row.backgroundColor = "#000000";
-            row.color = "#ffffff";
+            //row.backgroundColor = style.common.backgroundColor;
+            //Youtubeのサムネイルの黒帯があるため背景黒固定
+            row.backgroundColor = "black";
+            //row.color = style.common.mainTextColor;
+            row.color = "white";
            //TODO style
+           //thumbnail = thumbnail.replaceAll("hqdefault", "maxresdefault");	//上下の黒帯をなくす →maxresがない場合があるのでNG
             var img = Ti.UI.createImageView({
                 image : thumbnail
                 ,top: 0
@@ -142,7 +147,8 @@ function YoutubeWindow(title, gameDate, otherTeamId) {
                     fontSize : 14
                 }
                 ,wordWrap: true
-                ,color : "#ffffff"
+                //,color : style.common.mainTextColor
+                ,color : "white"
             });
             row.add(labelTitle);
         

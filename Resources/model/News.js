@@ -4,14 +4,14 @@ var style = require("util/style").style;
 var newsSource = require("model/newsSource");
 var XHR = require("util/xhr");
 var LOAD_FEED_SIZE = config.newsEntriesPerPage;
-var feedUrlBase = config.feedUrlBase + "?teamId=" + config.teamId + "&count=";
 var visitedUrlList = new Array();
 var rowIdx = 0;
 
 /**
  * ニュース情報
  */
-function News() {
+function News(teamId) {
+	var feedUrlBase = config.feedUrlBase + "?teamId=" + teamId + "&count=";
     var self = {};
     self.newest_item_timestamp = 0; // 最新データを読み込む場合のパラメータ（最新フィードのタイムスタンプ）
     self.oldest_item_timestamp = 0; // 古いデータを読み込む場合のパラメータ（最古フィードのタイムスタンプ）
@@ -177,9 +177,9 @@ function News() {
         var isVisited = util.contains(visitedUrlList, link);
         // ブロック確認
         var isBlocked = util.containsStartsWith(blockSiteList, link);
-        Ti.API.info("ブロックサイトリスト：" + util.toString(blockSiteList));
+        //Ti.API.info("ブロックサイトリスト：" + util.toString(blockSiteList));
         Ti.API.info('link=' + link);
-        Ti.API.info('ブロック？ ' + isBlocked);
+        //Ti.API.info('ブロック？ ' + isBlocked);
         if (isBlocked) {
         	return null;
         }
@@ -209,7 +209,7 @@ function News() {
         var data = {
             url: link
             ,contentView: {
-                backgroundColor: isVisited? style.news.visitedBgColor : 'black'
+                backgroundColor: isVisited? style.news.visitedBgColor : style.common.backgroundColor
             }
             ,image: {
                 image: imgUrl
@@ -224,7 +224,7 @@ function News() {
                 , height: imgUrl? dispImgHeight : Ti.UI.SIZE
             }
             ,siteNameAndDatetime: {text: siteName + "   " + pubDateText}
-            ,properties: {backgroundColor: isVisited? style.news.visitedBgColor : 'black'}
+            ,properties: {backgroundColor: isVisited? style.news.visitedBgColor : style.common.backgroundColor}
             
             ,fullSiteName: fullSiteName
             ,siteName: siteName
@@ -297,7 +297,7 @@ function News() {
             var rows = db.execute('SELECT url, date FROM blockSite');
             while (rows.isValidRow()) {
                 urlList.push(rows.field(0));
-                Ti.API.info('ブロックサイト　######## ' + rows.field(0) + " : " + rows.field(1));
+                //Ti.API.info('ブロックサイト　######## ' + rows.field(0) + " : " + rows.field(1));
                 rows.next();
             }
         } finally{

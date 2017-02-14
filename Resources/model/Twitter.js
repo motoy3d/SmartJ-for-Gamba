@@ -101,7 +101,7 @@ function Twitter(target) {
                             ,userScreenName: item.user_screen_name
                             ,publishedDatetime: item.created_at 
                             ,time: {text: timeText}
-                            ,backgroundColor: '#000'
+                            ,backgroundColor: style.common.backgroundColor
 
 // 選択時背景色がAndroidで効かない
 //                            ,selectedBackgroundColor: '#444'
@@ -119,7 +119,7 @@ function Twitter(target) {
             } finally {
             }
             var after = new Date();
-            Ti.API.info("Twitter.js#loadTweets() 処理時間★" 
+            Ti.API.info("Twitter.js#loadTweets() 処理時間★　" 
                 + (after.getTime()-before.getTime())/1000.0 + "秒");
         };
         function onErrorCallback(e) {

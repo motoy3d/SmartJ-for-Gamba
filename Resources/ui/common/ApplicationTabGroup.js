@@ -1,19 +1,24 @@
 function ApplicationTabGroup() {
+    Ti.API.info(">>>>>>>>>> ApplicationTabGroup start");
 	var NewsWindow = require('ui/handheld/NewsWindow');
 	var ResultsWindow = require('ui/handheld/ResultsWindow');
 	var StandingsWindow = require('ui/handheld/StandingsWindow');
 	var TwitterWindow = require('ui/handheld/TwitterWindow');
     var style = require("util/style").style;
     var util = require("util/util").util;
-	var self = Ti.UI.createTabGroup({
-	    navTintColor: style.common.navTintColor
-	});
+	var config = require("/config").config;
 	if(util.isAndroid()) {
-	    self.applyProperties(style.tabsAndroid);
+		var self = Ti.UI.createTabGroup({title: ''});
+//	    self.applyProperties(style.tabsAndroid);
+	} else {
+		var self = Ti.UI.createTabGroup({
+		    navTintColor: style.common.navTintColor
+		});
 	}
+
 	
 	//create app tabs
-	var win1 = new NewsWindow(self),
+	var win1 = new NewsWindow(self, config.teamId),
 		win2 = new ResultsWindow(self),
 		win3 = new StandingsWindow(self),
 		win4 = new TwitterWindow(self, "searchTweets"),
@@ -25,6 +30,7 @@ function ApplicationTabGroup() {
 		icon: '/images/news.png',
 		window: win1
 	});
+	win1.containingTab = tab1;
 	// 日程・結果
 	var tab2 = Ti.UI.createTab({
 		title: util.isAndroid()? "" : "日程・結果",
@@ -59,7 +65,7 @@ function ApplicationTabGroup() {
 	self.addTab(tab3);
 	self.addTab(tab4);
 	self.addTab(tab5);
-    
+    Ti.API.info(">>>>>>>>>> ApplicationTabGroup end");
 	return self;
 };
 

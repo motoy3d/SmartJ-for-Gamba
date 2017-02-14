@@ -12,12 +12,13 @@
 	    launchAppCount = 0;	//起動回数
 	    Ti.App.Properties.setBool("shareAndReviewDoneFlg", false);	
 	}
-	var eulaDone = Ti.App.Properties.getBool("eulaDone");
-    // 利用規約表示
-	if (!eulaDone) {
-		openEULA();
+	if (util.isiOS()) {
+		var eulaDone = Ti.App.Properties.getBool("eulaDone");
+	    // 利用規約表示
+		if (!eulaDone) {
+			openEULA();
+		}
 	}
-
 	Ti.App.Properties.setInt("LaunchAppCount", ++launchAppCount);
 	Ti.API.info('アプリ起動 : ' + launchAppCount);
 	// ユーザーID保存
@@ -39,17 +40,17 @@
 		dpi = Ti.Platform.displayCaps.dpi,
 		xdpi = Ti.Platform.displayCaps.xdpi,
 		ydpi = Ti.Platform.displayCaps.ydpi;
-	Ti.API.info('★★osname=' + osname);
-	Ti.API.info('★★osversion=' + osversion);
-    Ti.API.info('★★appversion=' + appversion);
-    Ti.API.info('★★name=' + name);
-    Ti.API.info('★★model=' + model);
-	Ti.API.info('★★width/height=' + width + "/" + height);
-	Ti.API.info('★★density=' + density);
-    Ti.API.info('★★logicalDensityFactor=' + logicalDensityFactor);
-	Ti.API.info('★★dpi=' + dpi);
-    Ti.API.info('★★xdpi=' + xdpi);
-    Ti.API.info('★★ydpi=' + ydpi);
+	Ti.API.info('★★　osname=' + osname);
+	Ti.API.info('★★　osversion=' + osversion);
+    Ti.API.info('★★　appversion=' + appversion);
+    Ti.API.info('★★　name=' + name);
+    Ti.API.info('★★　model=' + model);
+	Ti.API.info('★★　width/height=' + width + "/" + height);
+	Ti.API.info('★★　density=' + density);
+    Ti.API.info('★★　logicalDensityFactor=' + logicalDensityFactor);
+	Ti.API.info('★★　dpi=' + dpi);
+    Ti.API.info('★★　xdpi=' + xdpi);
+    Ti.API.info('★★　ydpi=' + ydpi);
     Ti.API.info('☆☆dpi from module=' + util.getDpi());
     Ti.App.Analytics.trackPageview("/startApp?m=" + model + "&v=" + osversion/* + "&wh=" + width + "x" + height*/);	
 
@@ -110,7 +111,7 @@
             if ( ( new Date() ).getTime() >= startTime + waitMilliSeconds ) break;
         }
         if(osname == "iphone") {
-            tabGroup.open({transition: Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT});      
+            tabGroup.open({transition: Ti.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT});      
         } else {
             tabGroup.open();
         }
@@ -186,24 +187,29 @@ function openEULA() {
 	var style = require("/util/style").style;
 	var config = require("/config").config;
 	var ruleWin = Ti.UI.createWindow();
-	
 	var navbar = Ti.UI.createView({
 		width: Ti.UI.FILL
 		,height: 40
 		,top: 20
 		,backgroundColor: style.common.barColor
 	});
-	var titleLabel = Ti.UI.createLabel({text: "利用規約", color: style.common.navTintColor});
+	var titleLabel = Ti.UI.createLabel({
+		text: config.appName + " 利用規約"
+		,color: style.common.navTintColor
+		,font: {fontSize: 14}
+	});
 	navbar.add(titleLabel);
 	ruleWin.add(navbar);
 
     var webView = Ti.UI.createWebView({
     	height:Ti.UI.SIZE
-    	,width:Ti.UI.FILL
+    	,width: "100%"
 		,top: 60
 		,bottom: 50
 	});
-    webView.url = "rules.html";
+//    webView.url = "/rules.html";
+    webView.url = config.rulesUrl + encodeURI(config.appName);
+    Ti.API.info('>>>>>>>>>>>>>>>>> 利用規約URL=' + webView.url);
 	ruleWin.add(webView);
 	
 	var toolbar = Ti.UI.createView({

@@ -17,7 +17,7 @@ function WebWindow(webData, callback) {
 	var self = Ti.UI.createWindow({
 		title: webData.title
         ,navBarHidden: webData.navBarHidden
-        ,backgroundColor: 'black'
+        ,backgroundColor: style.common.backgroundColor
         ,barColor: style.common.barColor
         ,navTintColor: style.common.navTintColor
         ,titleAttributes: {
@@ -41,11 +41,20 @@ function WebWindow(webData, callback) {
     var optionBtn = Ti.UI.createButton({
         systemButton:Ti.UI.iPhone.SystemButton.ACTION
     });
-	var opts = {
-		options: ['リンクをコピー', 'Safariで開く', 'ブロック', '報告', 'キャンセル'],
-		cancel: 4,
-		destructive: 0
-	};
+    var opts;
+    if (webData.isBlockReportEnable) {
+		var opts = {
+			options: ['リンクをコピー', 'Safariで開く', 'ブロック', '報告', 'キャンセル'],
+			cancel: 4,
+			destructive: 0
+		};
+    } else {
+		var opts = {
+			options: ['リンクをコピー', 'Safariで開く', 'キャンセル'],
+			cancel: 2,
+			destructive: 0
+		};
+    }
 	optionBtn.addEventListener('click', function(e){
 		var dialog = Ti.UI.createOptionDialog(opts);
 		dialog.addEventListener('click', function(e) {
@@ -53,7 +62,7 @@ function WebWindow(webData, callback) {
 				Ti.UI.Clipboard.setText(webView.url);
 			} else if (e.index == 1) {	//Safariで開く
 				Ti.Platform.openURL(webView.url);
-			} else if (e.index == 2) {	//ブロック
+			} else if (e.index == 2 && webData.isBlockReportEnable) {	//ブロック
 				var dialog = Ti.UI.createAlertDialog({
 					title: ""
 					,message: "このサイトをブロックして、今後表示しないようにしますか？"
@@ -91,7 +100,7 @@ function WebWindow(webData, callback) {
 					}
 				});
 				dialog.show();
-			} else if (e.index == 3) {	//報告
+			} else if (e.index == 3 && webData.isBlockReportEnable) {	//報告
 				var reportOpts = {
 					options: ['興味がない', '迷惑', 'キャンセル'],
 					cancel: 2,
@@ -127,7 +136,7 @@ function WebWindow(webData, callback) {
     var twitter;
     var line;
     if(webData.toolbarVisible) { //twitter画面以外から遷移した場合
-        createToolbar();
+    	createToolbar();
     }
     addWebViewEventListener();
     
@@ -175,7 +184,7 @@ function WebWindow(webData, callback) {
 //                webView.add(ind);
 //TODO style
                 ind = Ti.UI.createActivityIndicator({
-                    style:Ti.UI.iPhone.ActivityIndicatorStyle.DARK
+                    style:Ti.UI.ActivityIndicatorStyle.DARK
                 });
                 webView.add(ind);
                 ind.show();
@@ -239,7 +248,6 @@ function WebWindow(webData, callback) {
             ,enabled: false
         });
         
-               
         // twitterはiOS5で統合されたが、titanium-social-modulは
         // FB(iOS6から)が含まれているためiOS5でエラーになる。
         twitter = Ti.UI.createButton({
@@ -272,7 +280,14 @@ function WebWindow(webData, callback) {
         }
         var msg = encodeURIComponent(title + "  ") + link;
         Ti.API.info("LINEへのパラメータ=" + msg);
-        Ti.Platform.openURL("line://msg/text/" + msg);
+        var opened = Ti.Platform.openURL("line://msg/text/" + msg);
+        if (!opened) {
+            var dialog = Ti.UI.createAlertDialog({
+                message: "LINEをインストールしてください。",
+                buttonNames: ['OK']
+            });
+            dialog.show();
+        }
     }
     /**
      * twitterに投稿する。
