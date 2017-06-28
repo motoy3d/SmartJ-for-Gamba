@@ -109,11 +109,15 @@ function NewsWindow(tabGroup, teamId, teamName) {
 	        }
         }
     } else {
-	    var ad = require('net.nend');
-        // for iPhone
-        adView = ad.createView (style.news.adViewIPhoneBanner);
-        adView.spotId = config.nendSpotIdIPhoneBanner;
-        adView.apiKey = config.nendApiKeyIPhoneBanner;
+    	try {
+		    var ad = require('net.nend');
+	        // for iPhone
+	        adView = ad.createView (style.news.adViewIPhoneBanner);
+	        adView.spotId = config.nendSpotIdIPhoneBanner;
+	        adView.apiKey = config.nendApiKeyIPhoneBanner;
+        } catch(e) {
+        	Ti.API.info("広告プラグインエラー. " + e);
+        }
     }
     if (adView) {
         // 2. Add Event Listener.

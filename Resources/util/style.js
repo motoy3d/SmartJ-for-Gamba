@@ -119,7 +119,7 @@ exports.style = {
                 type: 'Ti.UI.Button',
                 bindId: 'otherTeamBtn',
                 properties: {
-                    backgroundImage: "/images/zoom@2x.png",
+                    backgroundImage: "/images/zoom.png",
                     width: "32dp",
                     height: "32dp",
                     top : "2dp",
