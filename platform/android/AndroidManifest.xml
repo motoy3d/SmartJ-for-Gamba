@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="smartj.gamba" android:versionCode="7" android:versionName="1.0.6">
-	<uses-sdk android:minSdkVersion="14" android:targetSdkVersion="23"/>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" package="smartj.gamba" 
+	android:versionCode="8" android:versionName="1.1.0">
+	<uses-sdk android:minSdkVersion="16" android:targetSdkVersion="27"/>
 	<application android:icon="@drawable/appicon" android:label="SmartJ for Gamba" android:name="SmartjForGambaApplication" android:debuggable="false" android:theme="@style/Theme.AppCompat">
 		<activity android:name=".SmartjForGambaActivity" android:configChanges="keyboardHidden|orientation|screenSize" android:label="@string/app_name" android:theme="@style/Theme.Titanium" android:screenOrientation="portrait">
 			<intent-filter>
@@ -15,4 +16,7 @@
 	<uses-permission android:name="android.permission.INTERNET"/>
 	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+	<!-- 勝手に入ってしまうので明示的にremove。 -->
+	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" tools:node="remove"/>
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" tools:node="remove"/>
 </manifest>
